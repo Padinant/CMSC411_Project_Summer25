@@ -5,6 +5,8 @@
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
 #include <iostream>
+#include <string>
+#include <fstream>
 using namespace std;
  
 class Instruction{
@@ -22,15 +24,26 @@ public:
   // getType() - returns myType
   // Preconditions: myType is initialized
   // Postconditions: None
-  string GetType();
+  string getType();
  
   // setType() - sets value of myType
   // Preconditions: None
   // Postconditions: None
-  void SetType(string type);
+  void setType(string type);
+
+  // getPlaintext() - returns plaintext
+  // Preconditions: plaintext is initialized
+  // Postconditions: None
+  string getPlaintext();
+ 
+  // setPlaintext() - sets value of plaintext
+  // Preconditions: None
+  // Postconditions: None
+  void setPlaintext(string text);
 
 private:
   string m_myType;
+  string m_plaintext;
 };
  
 #endif

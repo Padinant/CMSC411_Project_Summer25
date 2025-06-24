@@ -2,9 +2,12 @@
 // File: Processor.h
 // Desc: This class represents a processor
 // Date: June 23, 2025
+
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
 #include <iostream>
+#include <string>
+#include <fstream>
 #include "Instruction.h"
 using namespace std;
  
@@ -14,6 +17,11 @@ public:
   // Preconditions: None
   // Postconditions: None
   Processor();
+
+  // Overloaded Constructor
+  // Preconditions: None
+  // Postconditions: None
+  Processor(string filename);
  
   // Destructor
   // Preconditions: None
@@ -21,11 +29,12 @@ public:
   ~Processor();
 
   // loads instructions from the given file name into m_instructions
-  // Preconditions: file_name contains the load instructions
-  loadInstructions(file_name);
+  // Preconditions: filename contains valid instructions
+  void loadInstructions(string filename);
 
 private:
-  string m_instructions;
+  Instruction* m_instructions;
+  string m_filename;
 };
  
 #endif
