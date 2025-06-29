@@ -8,6 +8,12 @@
 #include <string>
 #include <fstream>
 using namespace std;
+
+const string INSTRUCTION_CATEGORIES = {"ALU", "MEMORY", "CONTROL"};
+const string MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
+const string ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
+const string CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
+
  
 class Instruction{
 public:
