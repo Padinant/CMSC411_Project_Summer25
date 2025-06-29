@@ -58,13 +58,14 @@ public:
 
   // NEW (not yet in Processor.cpp)
   // fetches the next instruction from m_instructions (corresponds to the IF stage)
-  // todo: return the instruction plaintext
-  void instructionFetch();
+  // creates instruction object + update pointer (+ todo later: figure out branch prediction at this stage)
+  Instruction instructionFetch();
 
   // NEW (not yet in Processor.cpp)
-  // decode a given plaintext instruction and create an instruction object, (corresponds to the ID stage)
-  // would interpret the instruction type, its dependencies, and other relevant details
-  Instruction instructionDecode(string instructionText);
+  // decode a given instruction object and load the values of all delivarables (corresponds to the ID stage)
+  // also check if we should stall (ie repeat this stage)
+  // would interpret its dependencies, and other relevant details not already known
+  void instructionDecode(Instruction inst);
 
   // NEW (not yet in Processor.cpp)
   // finds the names of the dependencies for a given instruction (is helper to instructionDecode())
