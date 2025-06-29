@@ -2,6 +2,7 @@
 // File: Processor.cpp
 // Desc: This class represents a processor
 // Date: June 23, 2025
+//Authors: Qanita Baqibillah and Padina Toussi
 
 #include <iostream>
 #include <string>
@@ -11,13 +12,13 @@ using namespace std;
 
 Processor::Processor(){
     // Constructor
-    m_instructions = {};
+    m_instructions;
     m_filename = "";
 }
 
 Processor::Processor(string filename){
     // Overloaded Constructor
-    m_instructions = {};
+    m_instructions;
     m_filename = filename;
 }
 
@@ -50,6 +51,7 @@ void Processor::loadInstructions(string filename){
     infile.open(filename);
 
     if (infile.is_open()) {
+        cout << "Loaded Instructions from txt: " << endl;
         while(getline(infile, result)){
             // create the corresponding Instruction object
             Instruction* newInstruction = new Instruction();
@@ -57,6 +59,9 @@ void Processor::loadInstructions(string filename){
 
             // add instruction into m_instructions
             m_instructions[count] = newInstruction;
+
+            // Print instruction at i
+            cout << count + 1 << ": " << result << endl;
 
             count++;
         }

@@ -6,6 +6,9 @@
 CXX = g++
 CXXFLAGS = -Wall
 
+testFile: Instruction.o Processor.o testFile.cpp
+	$(CXX) $(CXXFLAGS) Instruction.o Processor.o testFile.cpp -o testFile
+
 driver: Instruction.o Processor.o driver.cpp
 	$(CXX) $(CXXFLAGS) Instruction.o Processor.o driver.cpp -o driver
 
@@ -14,6 +17,7 @@ Processor.o: Processor.h Processor.cpp Instruction.o
 
 Instruction.o: Instruction.cpp Instruction.h
 	$(CXX) $(CXXFLAGS) -c Instruction.cpp
+
 
 clean:
 	rm *.o*

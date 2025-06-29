@@ -2,6 +2,8 @@
 // File: Instruction.cpp
 // Desc: This class represents an instruction
 // Date: June 23, 2025
+//Authors: Qanita Baqibillah and Padina Toussi
+
 #include <iostream>
 #include <string>
 #include <fstream>

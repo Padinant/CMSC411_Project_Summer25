@@ -2,6 +2,7 @@
 // File: Processor.h
 // Desc: This class represents a processor
 // Date: June 23, 2025
+//Authors: Qanita Baqibillah and Padina Toussi
 
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
@@ -11,10 +12,10 @@
 #include "Instruction.h"
 using namespace std;
 
-const string INSTRUCTION_CATEGORIES = {"ALU", "MEMORY", "CONTROL"};
-const string MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
-const string ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
-const string CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
+// const string INSTRUCTION_CATEGORIES = {"ALU", "MEMORY", "CONTROL"};
+// const string MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
+// const string ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
+// const string CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
 
  
 class Processor{
