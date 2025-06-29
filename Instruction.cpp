@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include <array>
+#include <vector>
 #include "Instruction.h"
 using namespace std;
 
