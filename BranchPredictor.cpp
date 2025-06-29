@@ -2,6 +2,7 @@
 // File: BranchPredictor.cpp
 // Desc: This class represents a (0, 1) branch predictor
 // Date: June 28, 2025
+// Authors: Qanita Baqibillah and Padina Toussi
 
 using namespace std;
 
