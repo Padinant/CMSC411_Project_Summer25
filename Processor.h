@@ -93,12 +93,13 @@ public:
 
 private:
   // Instruction* m_instructions[0]; // this corresponds to the rows
-  string m_instructions[0]; // this corresponds to the plaintext instructions
+  string* m_instructions; // this corresponds to the plaintext instructions
+  int m_instructions_len; // how many instructions in m_instructions (and the instruction file)
   string m_filename;
   // NEW (not yet in Processor.cpp)
-  int instruction_pointer = 0;  // points at the place in m_instruction, where the next instruction is supposed to be
-  int memory[18] = {0};   // when initializing the processor, set as memory values from the writeup
-  map<string, int> registers = {};  // represents registers and the values stored in them
+  int m_instruction_pointer = 0;  // points at the place in m_instruction, where the next instruction is supposed to be
+  int m_memory[18] = {0};   // when initializing the processor, set as memory values from the writeup
+  map<string, int> m_registers = {};  // represents registers and the values stored in them
 };
  
 #endif

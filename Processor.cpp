@@ -33,6 +33,7 @@ void Processor::loadInstructions(string filename){
     // loop 1: find out the count of instructions (this is so we don't have to use vectors instead of arrays)
     ifstream infile(filename);
     string result;
+    string line;
     int len = 0;
     int count = 0;  // used in loop 2
     if (infile.is_open()) {
@@ -44,7 +45,9 @@ void Processor::loadInstructions(string filename){
         cout << "Error opening instructions file";
     }
     // Update the length of m_instructions
-    string instructions[len] = {nullptr}; // filled with nullptr
+    m_instructions_len = len;
+    const int const_len = len;  // need a constant
+    string instructions[const_len] = {""}; // filled with empty strings
     m_instructions = instructions;
 
     // loop 2: For each instruction in the file, create an object and load it into the m_instructions array
