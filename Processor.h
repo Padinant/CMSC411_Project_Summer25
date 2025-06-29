@@ -64,6 +64,12 @@ public:
   // todo: implement a way to return the dependencies (either member attributes, or return a list of register names)
   void getDependencies(Instruction x);
 
+  // NEW (not yet in Processor.cpp)
+  // fetches the next instruction from m_instructions
+  // todo: return the instruction plaintext
+  void instructionFetch();
+
+
 
 
 
@@ -72,13 +78,23 @@ public:
 
 
 
+
+
+
+  // HELPER FUNCTIONS
+  
+  // trims any extra whitespace from before and after from the line
+  string trimExtraWhiteSpace(string s1);
+
+
+
 private:
-  Instruction* m_instructions[0];
+  // Instruction* m_instructions[0]; // this corresponds to the rows
+  string m_instructions[0]; // this corresponds to the plaintext instructions
   string m_filename;
   // NEW (not yet in Processor.cpp)
   int memory[18] = {0};   // when initializing the processor, set as memory values from the writeup
   //                            // OR: replace this with a global constant
-
 };
  
 #endif

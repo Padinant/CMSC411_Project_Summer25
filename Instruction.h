@@ -49,7 +49,8 @@ public:
 
 private:
   string m_myType;
-  string m_plaintext;
+  string m_plaintext; // the instruction in plaintext
+  bool m_isActive; // defaults true, unless proven false by branch selection - only continue the row for active instructions
 };
  
 #endif
