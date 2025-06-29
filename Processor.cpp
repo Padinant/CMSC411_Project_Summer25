@@ -2,7 +2,6 @@
 // File: Processor.cpp
 // Desc: This class represents a processor
 // Date: June 23, 2025
-//Authors: Qanita Baqibillah and Padina Toussi
 
 #include <iostream>
 #include <string>
@@ -45,23 +44,24 @@ void Processor::loadInstructions(string filename){
         cout << "Error opening instructions file";
     }
     // Update the length of m_instructions
-    Instruction* m_instructions[len] = {nullptr}; // filled with nullptr
+    string instructions[len] = {nullptr}; // filled with nullptr
+    m_instructions = instructions;
 
     // loop 2: For each instruction in the file, create an object and load it into the m_instructions array
     infile.open(filename);
 
     if (infile.is_open()) {
-        cout << "Loaded Instructions from txt: " << endl;
-        while(getline(infile, result)){
-            // create the corresponding Instruction object
-            Instruction* newInstruction = new Instruction();
-            newInstruction->setPlaintext(result);    // plaintext
+        while(getline(infile, line)){
+            // set the var result equal to the line but with the beginning and end whitespaces removed
+
+
+            // // create the corresponding Instruction object
+            // Instruction* newInstruction = new Instruction();
+            // newInstruction->setPlaintext(result);    // plaintext
 
             // add instruction into m_instructions
-            m_instructions[count] = newInstruction;
-
-            // Print instruction at i
-            cout << count + 1 << ": " << result << endl;
+            // m_instructions[count] = newInstruction;
+            m_instructions[count] = result;
 
             count++;
         }
@@ -71,5 +71,17 @@ void Processor::loadInstructions(string filename){
         cout << "Error opening instructions file";
     }
 }
+
+
+
+// HELPER FUNCTIONS
+
+string Processor::trimExtraWhiteSpace(string s1){
+    // trims any extra whitespace from before and after from the line
+    // example input: "       ADD F1, F2, F3  "
+    // example output: "ADD F1, F2, F3"
+
+}
+
 
 
