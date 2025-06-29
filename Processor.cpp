@@ -7,7 +7,6 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <vector>
 #include "Processor.h"
 using namespace std;
 
@@ -15,16 +14,20 @@ Processor::Processor(){
     // Constructor
     m_instructions;
     m_filename = "";
+    m_clock = 0;
 }
 
 Processor::Processor(string filename){
     // Overloaded Constructor
     m_instructions;
     m_filename = filename;
+    m_clock = 0;
 }
 
 Processor::~Processor(){
     // Destructor
+    // todo: make sure to deallocate anything dynamically allocated such as 
+    //    // m_instructions
 }
 
 // loads instructions from the given file name into m_instructions
