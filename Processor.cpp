@@ -7,6 +7,10 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
+#include <map>
+#include <vector>
+#include <array>
 #include "Processor.h"
 using namespace std;
 
