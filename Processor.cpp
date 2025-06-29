@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
 #include "Processor.h"
 using namespace std;
 
@@ -124,6 +125,26 @@ void Processor::getDependencies(Instruction x){
 
 
 // HELPER FUNCTIONS
+
+void exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols){
+    // open new txt file
+    ofstream outfile(filename);
+
+    // iterate 2d array spreadsheet
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            outfile << spreadsheet[i][j]; // add contents to file
+            if (j < cols - 1) {
+                outfile << "\t"; // add tab between valus for clean visualization
+            }
+        }
+        outfile << endl; // add new line after each row
+    }
+
+    outfile.close();
+}
+
+
 
 string Processor::trimExtraWhiteSpace(string s1){
     // trims any extra whitespace from before and after from the line

@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <map>
+#include <vector>
 #include "Instruction.h"
 using namespace std;
 
@@ -84,7 +85,7 @@ public:
   //Export spreadsheet to file
     // takes 2d array of strings
     // using filename
-
+void exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols);
 
 
 
