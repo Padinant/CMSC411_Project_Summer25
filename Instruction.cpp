@@ -46,3 +46,25 @@ string Instruction::getPlaintext(){
 void Instruction::setPlaintext(string text){
     m_plaintext = text;
 }
+
+// More getters and setters
+string Instruction::getDest(){
+    return m_dest;
+}
+void Instruction::setDest(string dest){
+    m_dest = dest;
+}
+
+string Instruction::getS1(){
+    return m_s1;
+}
+void Instruction::setS1(string s1){
+    m_s1 = s1;
+}
+
+string Instruction::getS2(){
+    return m_s2;
+}
+void Instruction::setS2(string s2){
+    m_s2 = s2;
+}

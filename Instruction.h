@@ -49,10 +49,25 @@ public:
   // Postconditions: None
   void setPlaintext(string text);
 
+  // more setters and getters
+  string getDest();
+  void setDest(string dest);
+
+  string getS1();
+  void setS1(string s1);
+
+  string getS2();
+  void setS2(string s2);
+
 private:
   string m_myType;
   string m_plaintext; // the instruction in plaintext
   bool m_isActive; // defaults true, unless proven false by branch selection - only continue the row for active instructions
+
+  // attributes for instruction sources, destination, etc.
+  string m_dest;
+  string m_s1;
+  string m_s2;
 };
  
 #endif
