@@ -9,13 +9,16 @@
 #include <string>
 #include <fstream>
 #include <map>
+#include <vector>
+#include <array>
 #include "Instruction.h"
 using namespace std;
 
-// const string INSTRUCTION_CATEGORIES = {"ALU", "MEMORY", "CONTROL"};
-// const string MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
-// const string ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
-// const string CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
+// Constants corresponding to instruction categories and types
+const array<string, 3> INSTRUCTION_CATEGORIES = {"ALU", "MEMORY", "CONTROL"};
+const array<string, 5> MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
+const array<string, 7> ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
+const array<string, 3> CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
 
  
 class Processor{
@@ -54,6 +57,11 @@ public:
 
 
   // PIPELINING IMPLEMENTATION FUNCTIONS:
+  // KEY FUNCTION: 
+  // This function would be called to start the simulated pipeline
+  // Postcondition: when done, would also save the pipeline results into a new file
+  void startProcessor();
+
 
 
   // NEW (not yet in Processor.cpp)
@@ -93,14 +101,19 @@ public:
 
 
 private:
-  // Instruction* m_instructions[0]; // this corresponds to the rows
+  // program instruction related attributes
   string* m_instructions; // this corresponds to the plaintext instructions
   int m_instructions_len; // how many instructions in m_instructions (and the instruction file)
   string m_filename;
-  // NEW (not yet in Processor.cpp)
   int m_instruction_pointer = 0;  // points at the place in m_instruction, where the next instruction is supposed to be
+  
+  // memory and registers
   int m_memory[18] = {0};   // when initializing the processor, set as memory values from the writeup
   map<string, int> m_registers = {};  // represents registers and the values stored in them
+
+  // logistics attributes about pipelining
+  vector<Instruction> m_pipeline; // This vector represents all the instructions within the pipeline, in order of being fetched
+  int m_clock = 0; // corresponds to the current cycle within the entire pipeline (pipeline starts at clock cycle 1)
 };
  
 #endif
