@@ -2,6 +2,7 @@
 // File: Processor.h
 // Desc: This class represents a processor
 // Date: June 23, 2025
+// Authors: Qanita Baqibillah and Padina Toussi
 
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
@@ -80,7 +81,9 @@ public:
   // DISPLAY RELATED FUNCTIONS:
   // TODO LATER
 
-
+  //Export spreadsheet to file
+    // takes 2d array of strings
+    // using filename
 
 
 
