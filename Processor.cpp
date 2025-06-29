@@ -2,6 +2,7 @@
 // File: Processor.cpp
 // Desc: This class represents a processor
 // Date: June 23, 2025
+// Authors: Qanita Baqibillah and Padina Toussi
 
 #include <iostream>
 #include <string>
@@ -64,8 +65,9 @@ void Processor::loadInstructions(string filename){
 
             // add instruction into m_instructions
             // m_instructions[count] = newInstruction;
+            result = trimExtraWhiteSpace(line);
             m_instructions[count] = result;
-
+            cout << "result: " << result << endl;
             count++;
         }
         infile.close();
@@ -80,29 +82,29 @@ void Processor::loadInstructions(string filename){
 
 // fetches the next instruction from m_instructions (corresponds to the IF stage)
 // creates instruction object + update pointer (+ todo later: figure out branch prediction at this stage)
-Instruction Processor::instructionFetch(){
-    // Loads instruction plaintext (if any exist at address)
-    // Creates instruction class and loads relevant attributes (ignore any labels at the beginning)
-    // Updates instruction pointer (todo: this is currently just pointer +1)
+// Instruction Processor::instructionFetch(){
+//     // Loads instruction plaintext (if any exist at address)
+//     // Creates instruction class and loads relevant attributes (ignore any labels at the beginning)
+//     // Updates instruction pointer (todo: this is currently just pointer +1)
 
-    // part 0
-    if (m_instruction_pointer >= m_instructions_len){
-        // pointer out of range - we've reached the end of the program
-        return;
-    }
-    // part 1
-    string plaintext = m_instructions[m_instruction_pointer];
+//     // part 0
+//     if (m_instruction_pointer >= m_instructions_len){
+//         // pointer out of range - we've reached the end of the program
+//         return;
+//     }
+//     // part 1
+//     string plaintext = m_instructions[m_instruction_pointer];
     
-    // part 2
-    Instruction myInst;
-    // todo: [CONTINUE CODE]
+//     // part 2
+//     Instruction myInst;
+//     // todo: [CONTINUE CODE]
 
 
-    // part 4
-    return myInst;
+//     // part 4
+//     return myInst;
 
 
-}
+// }
 
 // NEW (not yet implemented in Processor.cpp)
 // decode a given instruction object and load the values of all delivarables (corresponds to the ID stage)
@@ -127,7 +129,9 @@ string Processor::trimExtraWhiteSpace(string s1){
     // trims any extra whitespace from before and after from the line
     // example input: "       ADD F1, F2, F3  "
     // example output: "ADD F1, F2, F3"
+    if (s1.empty()) return s1;
 
+    return s1.substr(s1.find_first_not_of(" \t\n\r"), s1.find_last_not_of(" \t\n\r") - s1.find_first_not_of(" \t\n\r") + 1);
 }
 
 
