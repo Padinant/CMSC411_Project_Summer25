@@ -93,7 +93,7 @@ void Processor::loadInstructions(string filename){
 Instruction Processor::instructionFetch(){
     // Loads instruction plaintext (if any exist at address)
     // Creates instruction class and loads relevant attributes (ignore any labels at the beginning)
-    // Updates instruction pointer (todo: this is currently just pointer +1)
+    // Updates instruction pointer (this is currently just pointer +1, todo: add branch prediction capabilities)
 
     // part 0
     if (m_instruction_pointer >= m_instructions_len){
@@ -104,13 +104,59 @@ Instruction Processor::instructionFetch(){
     string plaintext = m_instructions[m_instruction_pointer];
     // plaintext = ...  // remove label from beginning if any // todo
     
-    // part 2
-    Instruction myInst;
-    // todo: [CONTINUE CODE]
+    // part 2 - creating an instruction object
+    Instruction myInst(plaintext, m_clock);
+    
+    // detrmine type, dest, source1, source2
+    // Some Valid Examples:
+    // "ADD.D F2,F0,F1"
+    // "S.D F2,0($2)
+    // "LI $7,0"
 
+    // find first word until space --> type
+    int space_pos = plaintext.find(' ');  // position of the first space
+    string text1 = plaintext.substr(0, space_pos); // first chunk (before the space) --> the instruction type!
+    string text2 = plaintext.substr(space_pos + 1); // The rest of the string (after the space)
+    
+    myInst.setType(text1);
+    
+    // split string by commas: dest, source1, source2(optional)
+    string text_a, text_b, text_c;
+    int first_comma = plaintext.find(',');
+    int second_comma = plaintext.find(',', first_comma + 1);
+
+    if (second_comma == -1){    // note: npos should be converted into -1 since we saved second_comma as int
+        // there is only 1 comma
+        text_a = plaintext.substr(0, first_comma);
+        text_b = plaintext.substr(first_comma + 1, second_comma - first_comma - 1);
+        text_c = plaintext.substr(second_comma + 1);
+    } else {
+        // there are 2 commas
+        text_a = plaintext.substr(0, first_comma);
+        text_b = plaintext.substr(first_comma + 1);
+        text_c = "";
+    }
+
+    text_a = trimExtraWhiteSpace(text_a);
+    text_b = trimExtraWhiteSpace(text_b);
+    text_c = trimExtraWhiteSpace(text_c);   // check this doesn't cause an error
+
+    myInst.setDest(text_a);
+    myInst.setS1(text_b);
+    myInst.setS2(text_c);
+
+    // part 3 - update instruction pointer  (TODO: add branch prediction)
+    if (1){
+        // default case
+        m_instruction_pointer += 1;
+    } else {
+        // Use Branch Prediction To Figure Where to Point Next?
+        // todo: add a member attr to keep track of prev pointers if prediction is wrong
+    }
 
     // part 4
-    return myInst;
+    m_pipeline.push_back(myInst);
+    return myInst;  // in later version, don't return myInst, instead just add it to the pipeline
 
 
 }
