@@ -92,7 +92,7 @@ public:
   //Export spreadsheet to file
     // takes 2d array of strings
     // using filename
-void exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols);
+  void exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols);
 
 
 
@@ -101,6 +101,17 @@ void exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols
   // trims any extra whitespace from before and after from the line
   string trimExtraWhiteSpace(string s1);
 
+  // given a valid plaintext line of code, checks whether there is a label and removes it if there is
+  // Examples:
+  // "Loop1: ADD F1, F2, F3" ---> "ADD F1, F2, F3"
+  // "ADD F1, F2, F3" ---> "ADD F1, F2, F3"
+  string removeLabel(string plaintext);
+
+  // given a plaintext line of code, returns "" if there is no label or the label name if there is a label
+  // Examples:
+  // "Loop1: ADD F1, F2, F3" ---> "Loop1"
+  // "ADD F1, F2, F3" ---> ""
+  string getLabel(string plaintext);
 
 
 private:

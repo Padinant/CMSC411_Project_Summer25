@@ -10,6 +10,7 @@
 #include <string>
 #include <fstream>
 #include <array>
+#include <vector>
 using namespace std;
 
 // Constants corresponding to instruction categories and types
