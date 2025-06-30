@@ -180,7 +180,7 @@ void Processor::getDependencies(Instruction x){
 
 // HELPER FUNCTIONS
 
-void exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols){
+void Processor::exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols){
     // open new txt file
     ofstream outfile(filename);
 
