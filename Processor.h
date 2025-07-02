@@ -44,7 +44,7 @@ public:
   // PUBLIC HELPERS FOR TESTING
   void setRegisterValue(string reg, int value);
   int getMemoryValue(int index);
-
+  int getRegisterValue(string reg);
   // loads instructions from the given file name into m_instructions
   // Preconditions: filename contains valid instructions
   void loadInstructions(string filename);
@@ -54,19 +54,19 @@ public:
 
   // NEW (not yet in Processor.cpp)
   // loads data from memory into register
-  void load(string regAddress, string memAddress);
+  void load(string reg_address, string mem_address);
   
   // NEW (not yet in Processor.cpp)
   // loads data from register into memory
   // 19 --> 19%(18+1) = 0
   // 20 --> 20%19 = 1
-  void store(string regAddress, string memAddress);
+  void store(string reg_address, string mem_address);
 
   // NEW 
   // convert memory address (from instructions) to a memory index between 0-18 inclusive
   // Example: mem_address = "0($1)" ---> 1
   // Example: mem_address = "$7" ---> 7
-  int memoryAddressToIndex(string memAddress);
+  int memoryAddressToIndex(string mem_address);
 
 
 

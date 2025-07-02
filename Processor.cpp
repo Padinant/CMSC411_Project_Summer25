@@ -41,13 +41,28 @@ Processor::~Processor(){
 }
 
 // PUBLIC HELPERS FOR TESTING
-void Processor::setRegisterValue(string reg, int value) {
-    m_registers[reg] = value;
-}
+// void Processor::setRegisterValue(string reg, int value) {
+//     m_registers[reg] = value;
+// }
 
 int Processor::getMemoryValue(int index) {
     if (index >= 0 && index < 19) {
         return m_memory[index];
+    }
+    return -1;
+}
+
+void Processor::setRegisterValue(string reg, int value) {
+    int reg_index = atoi(reg.substr(1).c_str());
+    if (reg_index >= 0 && reg_index < 32) {
+        m_registers[reg_index] = value;
+    }
+}
+
+int Processor::getRegisterValue(string reg) {
+    int reg_index = atoi(reg.substr(1).c_str());
+    if (reg_index >= 0 && reg_index < 32) {
+        return m_registers[reg_index];
     }
     return -1;
 }
@@ -108,12 +123,29 @@ void Processor::loadInstructions(string filename){
     }
 }
 
+void Processor::load(string reg_address, string mem_address){
+    // To convert mem_address to an actual index
+    int mem_index = memoryAddressToIndex(mem_address);
+
+    // Extracting the register index
+    int reg_index = atoi(reg_address.substr(1).c_str());
+
+    // Make sure the reg_index is valid between 0-32
+    if (reg_index < 0 || reg_index >= 32) {
+        cout << "Invalid register index: " << reg_index << endl;
+        return;
+    }
+    // Load value from memory into register
+    m_registers[reg_index] = m_memory[mem_index];
+
+}
+
 void Processor::store(string reg_address, string mem_address){
     // Extracting the register index
     int reg_index = atoi(reg_address.substr(1).c_str());
 
     // Getting the value stored in the the register
-    int value = m_registers[reg_address];
+    int value = m_registers[reg_index];
 
     // To convert it to an actual index
     int mem_index = memoryAddressToIndex(mem_address);
@@ -204,7 +236,7 @@ void Processor::startProcessor(){
             Instruction newInst = instructionFetch();
 
             // update the stage log in newInst
-            newInst.m_stage_log.push_back("IF");    // note: will edit this line, this is stock code
+            //newInst.m_stage_log.push_back("IF");    // note: will edit this line, this is stock code
 
             // add newInst to the end of the pipeline
             m_pipeline.push_back(newInst);

@@ -17,6 +17,7 @@ class Tester{
         void testExportSpreadsheet();
         void testAddressToIndex();
         void testStore();
+        void testLoad();
     private:
 
 };
@@ -28,6 +29,7 @@ int main(){
     test.testExportSpreadsheet();
     test.testAddressToIndex();
     test.testStore();
+    test.testLoad();
     return 0;
 }
 
@@ -96,4 +98,21 @@ void Tester::testStore(){
 
     cout << "Testing store(): " << endl;
     cout << "Expected memory[" << expectedIndex << "] = 101. Got: " << actualValue << endl;
+}
+
+void Tester::testLoad(){
+    Processor p;
+    int expectedValue = 101;
+    int memoryIndex = 5;
+
+    p.setRegisterValue("$1", expectedValue);
+    p.store("$1", "$5");
+
+    p.load("$10", "$5");
+
+    int actual = p.getRegisterValue("$10");
+
+    cout << "Testing load(): " << endl;
+    cout << "\Register $10 contains " << actual << ". Expected: " << expectedValue << endl;
+
 }
