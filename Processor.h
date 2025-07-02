@@ -41,6 +41,10 @@ public:
   // Postconditions: None
   ~Processor();
 
+  // PUBLIC HELPERS FOR TESTING
+  void setRegisterValue(string reg, int value);
+  int getMemoryValue(int index);
+
   // loads instructions from the given file name into m_instructions
   // Preconditions: filename contains valid instructions
   void loadInstructions(string filename);

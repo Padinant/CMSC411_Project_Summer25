@@ -16,6 +16,7 @@ class Tester{
         void testLoadInstructions(const string& filename);
         void testExportSpreadsheet();
         void testAddressToIndex();
+        void testStore();
     private:
 
 };
@@ -26,6 +27,7 @@ int main(){
     test.testLoadInstructions(testFilename);
     test.testExportSpreadsheet();
     test.testAddressToIndex();
+    test.testStore();
     return 0;
 }
 
@@ -82,4 +84,16 @@ void Tester::testAddressToIndex(){
         int index = p.memoryAddressToIndex(testCases[i]);
         cout << "memAddress: " << testCases[i] << "-> Index: " << index << endl;
     }
+}
+
+void Tester::testStore(){
+    Processor p;
+    p.setRegisterValue("$5", 101);
+    p.store("$5", "0($2)");
+
+    int expectedIndex = p.memoryAddressToIndex("0($2)");
+    int actualValue = p.getMemoryValue(expectedIndex);
+
+    cout << "Testing store(): " << endl;
+    cout << "Expected memory[" << expectedIndex << "] = 101. Got: " << actualValue << endl;
 }
