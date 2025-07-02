@@ -156,3 +156,21 @@ void Instruction::setS2(string s2){
     return m_hasEnded;
   }
 
+
+
+// More complex pipeline-related functions
+
+// Pushes the given stageName into m_stageLog - very useful for pushing stalls and IF stage
+// note: it doesn't update any other variables
+// Precondition: stageName is a valid stage name
+// Examples: stageName = "STALL", "IF", "A1", "WB", etc.
+void Instruction::pushToStageLog(string stageName){
+    m_stage_log.push_back("stageName");
+}
+
+// Pushes the default next stage into m_stageLog based on the function type and the previous stages
+// Precondition: IF stage has already been completed
+// Example: if we have a branch instruction using 
+// void Instruction::pushToStageLogDefault();
+
+
