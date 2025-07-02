@@ -166,13 +166,19 @@ void Processor::startProcessor(){
             // ADD CODE HERE LATER
         }
 
-        // fetch the next instruction if not stalling AND there are more instructions to fetch
+        // fetch the next instruction if not stalling AND there are more instructions left to fetch
         if (!stall_all_the_way_down and (m_instruction_pointer >= m_instructions_len)){
             Instruction newInst = instructionFetch();
+
+            // update the stage log in newInst
+            newInst.m_stage_log.push_back("IF");    // note: will edit this line, this is stock code
+
+            // add newInst to the end of the pipeline
             m_pipeline.push_back(newInst);
         }
 
         // update some pipeline-related variable to update the cycle
+
     }
 }
 

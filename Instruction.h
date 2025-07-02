@@ -86,6 +86,19 @@ public:
   bool getHasEnded(); 
 
 
+  // More complext pipeline-related functions
+
+  // Pushes the given stageName into m_stageLog - very useful for pushing stalls and IF stage
+  // Examples: stageName = "STALL", "IF", "A1", "WB", etc.
+  void pushToStageLog(string stageName);
+  
+  // Pushes the default next stage into m_stageLog based on the function type and the previous stages
+  // Precondition: IF stage has already been completed
+  // Example: if we have a branch instruction using 
+  void pushToStageLogDefault();
+
+
+
 private:
   string m_plaintext; // the instruction in plaintext
   
