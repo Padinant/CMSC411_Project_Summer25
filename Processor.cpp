@@ -26,6 +26,9 @@ Processor::Processor(string filename){
     m_instructions;
     m_filename = filename;
     m_clock = 0;
+    for (int i = 0; i < 19; i++) {
+        m_memory[i] = DEFAULT_MEMORY[i];
+    }
 }
 
 Processor::~Processor(){

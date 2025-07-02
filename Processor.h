@@ -20,6 +20,7 @@ const array<string, 3> INSTRUCTION_CATEGORIES = {"ALU", "MEMORY", "CONTROL"};
 const array<string, 5> MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
 const array<string, 7> ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
 const array<string, 3> CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
+const array<int, 19> DEFAULT_MEMORY = {45, 12, 0, 92, 10, 135, 254, 127, 18, 4,55, 8, 2, 98, 13, 5, 233, 158, 167};
 
  
 class Processor{
