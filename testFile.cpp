@@ -1,8 +1,8 @@
 // CMSC 411 Project - Summer 2025
 // File: testFile.cpp
-// Desc: This class represents a processor
-// Date: June 23, 2025
-//Authors: Qanita Baqibillah and Padina Toussi
+// Desc: The Test File
+// Date: June 28, 2025
+//Author: Qanita Baqibillah
 
 #include <iostream>
 #include <string>

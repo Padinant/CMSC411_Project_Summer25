@@ -2,7 +2,7 @@
 // File: driver.cpp
 // Desc: This is the driver for the project (ie. the file to run)
 // Date: June 23, 2025
-//Authors: Qanita Baqibillah and Padina Toussi
+//Authors: Padina Nasiri Toussi and Qanita Baqibillah
 
 #include "Instruction.h"
 #include "Processor.h"

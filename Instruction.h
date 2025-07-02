@@ -2,7 +2,7 @@
 // File: Instruction.h
 // Desc: This class represents an instruction
 // Date: June 23, 2025
-//Authors: Qanita Baqibillah and Padina Toussi
+//Authors: Padina Nasiri Toussi and Qanita Baqibillah
 
 #ifndef INSTRUCTION_H
 #define INSTRUCTION_H
@@ -91,6 +91,14 @@ private:
   bool m_isActive; // defaults true, unless proven false by branch selection - only continue the row for active instructions
   bool m_hasEnded; // defaults false, and is set to true when instruction ends - only continue the row if !hasEnded
   
+  // attributes relating to Branch Prediction and CONTROL category instructions
+  // note: these are only referenced or changed for control instructions
+  // in all these attributes, the value being -1 means the variable is unkown (or irrelevant)
+  int m_ptr_to_not_taken = -1; // corresponds to an index of the instruction on m_instructions
+  int m_ptr_to_not_taken = -1; // corresponds to an index of the instruction on m_instructions
+  int m_predicted_taken = -1;  // 1=yes, 0=no
+  int m_actual_taken = -1;  // 1=yes, 0=no
+
   // pipeline related attrbutes
   int m_initial_cycle;  // the cycle number where the instruction object was created on
   int m_final_cycle;  // the cycle where the last stage of the instruction happened - it is otherwise -1.
