@@ -102,7 +102,8 @@ void Processor::startProcessor(){
     - start pipeline loop (main portion) - 1 iteration corresponds to 1 clock cycle:
         - look at every instruction already in the pipeline and have them progress by 1 step
             - if any is stalling, everything after would also stall, and we'd skip the IF part    
-            - otherwise, instruction fetch from the next line (if not empty line), and increment the pointer
+            - otherwise, instruction fetch from the next line (if not empty line), and increment the m_instruction_pointer
+            - incremeny clock cycle by 1
     - when the loop is done, and no active instruction is left in the pipeline, convert the pipeline into 2D array
     - export the array into a text file
     */ 
