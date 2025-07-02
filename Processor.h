@@ -136,8 +136,8 @@ private:
   
   // memory and registers
   int m_memory[19] = {0};   // when initializing the processor, set as memory values from the writeup (0-18 inclusive)
-  map<string, int> m_registers = {};  // represents registers and the values stored in them
-
+  int m_registers[32] = {0}; // represents the values stored in registers F0-F31. All are initialized to 0.
+  
   // logistics attributes about pipelining
   vector<Instruction> m_pipeline; // This vector represents all the instructions within the pipeline, in order of being fetched
   int m_clock = 0; // corresponds to the current cycle within the entire pipeline (pipeline starts at clock cycle 1)
