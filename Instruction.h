@@ -19,6 +19,19 @@ const array<string, 5> MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
 const array<string, 7> ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
 const array<string, 3> CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
 
+const array<string, 5> DEFAULT_PIPELINE_STAGES = {"IF", "ID", "EX", "MEM", "WB"};
+
+const int NUM_INT_EXECUTES = 1;
+const int NUM_DOUBLE_ADD_EXECUTES = 2;
+const int NUM_DOUBLE_MULT_EXECUTES = 10;
+const int NUM_DOUBLE_DIV_EXECUTES = 40;
+
+const string STALL_NAME = "STALL";
+const string INT_EXECUTE_NAME = "EX";
+const string DOUBLE_ADD_EXECUTE_PREFIX = "A";
+const string DOUBLE_MULT_EXECUTE_PREFIX = "M";
+const string DOUBLE_DIV_EXECUTE_PREFIX = "D";
+
  
 class Instruction{
 public:
@@ -98,6 +111,9 @@ public:
   // Precondition: IF stage has already been completed
   // Example: if we have a branch instruction using 
   void pushToStageLogDefault();
+
+  // Returns the most recently logged stage. If stage log is empty, return ""
+  string getLatestStageLog();
 
 
 

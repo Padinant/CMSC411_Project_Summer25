@@ -170,7 +170,47 @@ void Instruction::pushToStageLog(string stageName){
 
 // Pushes the default next stage into m_stageLog based on the function type and the previous stages
 // Precondition: IF stage has already been completed
-// Example: if we have a branch instruction using 
-// void Instruction::pushToStageLogDefault();
+// Example: if we have a branch instruction using int unit, and latest stage was "ID", we would push "IF"
+void Instruction::pushToStageLogDefault(){
+    string prevStage = getLatestStageLog();
+    if (prevStage == ""){
+        return;
+    }
+    if (prevStage == "STALL"){     // --> [depends]
+        // find the latest none-stall command
+        string prevRelevantStage = "";
+        for (int i = m_stage_log.size() - 1; i >= 0; --i) {
+            if (m_stage_log[i] != "stall") {
+                prevRelevantStage = m_stage_log[i];
+                break;
+            }
+        }
+
+        // It get's slightly inductive here
+        // todo:
+        // pushToStageLog(...);
+        return;
+    }
+    if (prevStage == "IF"){     // --> ID
+        pushToStageLog("ID");
+        return;
+    }
+    if (prevStage == "ID"){      // --> EX [though the exact one depends]
+        // figure out the execute stage's name
+        
+        // pushToStageLog("ID");
+        return;
+    } 
+    // the rest is todo later
+
+}
 
 
+// Returns the most recently logged stage. If stage log is empty, return ""
+string Instruction::getLatestStageLog(){
+    if (m_stage_log.empty()){
+        return "";
+    }
+
+    return m_stage_log.back();  // returns the last element of the vector
+}
