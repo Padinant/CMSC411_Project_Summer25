@@ -15,6 +15,7 @@ class Tester{
     public:
         void testLoadInstructions(const string& filename);
         void testExportSpreadsheet();
+        void testAddressToIndex();
     private:
 
 };
@@ -24,6 +25,7 @@ int main(){
     Tester test;
     test.testLoadInstructions(testFilename);
     test.testExportSpreadsheet();
+    test.testAddressToIndex();
     return 0;
 }
 
@@ -68,4 +70,8 @@ void Tester::testExportSpreadsheet(){
     //     delete[] spreadsheet[i];
     // }
     // delete[] spreadsheet;
+}
+
+void Tester::testAddressToIndex(){
+    
 }
