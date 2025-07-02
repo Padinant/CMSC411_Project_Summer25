@@ -2,7 +2,7 @@
 // File: Processor.h
 // Desc: This class represents a processor
 // Date: June 23, 2025
-// Authors: Qanita Baqibillah and Padina Toussi
+// Authors: Padina Nasiri Toussi and Qanita Baqibillah
 
 #ifndef PROCESSOR_H
 #define PROCESSOR_H

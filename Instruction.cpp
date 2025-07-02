@@ -2,7 +2,7 @@
 // File: Instruction.cpp
 // Desc: This class represents an instruction
 // Date: June 23, 2025
-// Authors: Qanita Baqibillah and Padina Toussi
+// Authors: Padina Nasiri Toussi and Qanita Baqibillah
 
 #include <iostream>
 #include <string>
@@ -65,6 +65,13 @@ void Instruction::setType(string type){
     m_myType = type;
 }
 
+// // getCategory() - returns category based on the type
+// // Preconditions: myType is initialized
+// string Instruction::getType(){
+//     switch (m_myType){
+
+//     }
+// }
 
 // More getters and setters
 string Instruction::getDest(){

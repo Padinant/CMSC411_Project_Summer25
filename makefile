@@ -2,6 +2,7 @@
 # File: makefile
 # Desc: The makefile for the project
 # Date: June 23, 2025
+# Authors: Padina Nasiri Toussi and Qanita Baqibillah
 
 CXX = g++
 CXXFLAGS = -Wall
