@@ -122,7 +122,7 @@ private:
   int m_instruction_pointer = 0;  // points at the place in m_instruction, where the next instruction is supposed to be
   
   // memory and registers
-  int m_memory[18] = {0};   // when initializing the processor, set as memory values from the writeup
+  int m_memory[19] = {0};   // when initializing the processor, set as memory values from the writeup (0-18 inclusive)
   map<string, int> m_registers = {};  // represents registers and the values stored in them
 
   // logistics attributes about pipelining
