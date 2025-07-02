@@ -55,6 +55,11 @@ public:
   // loads data from register into memory
   void store(string register_address, string memory_address);
 
+  // NEW 
+  // convert memory address (from instructions) to a memory index between 0-18 inclusive
+  // Example: mem_address = "0($1)" ---> 1
+  int memory_address_to_index(string mem_address);
+
 
 
   // PIPELINING IMPLEMENTATION FUNCTIONS:
