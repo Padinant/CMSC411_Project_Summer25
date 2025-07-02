@@ -60,7 +60,7 @@ void Tester::testExportSpreadsheet(){
 
     // create the processor instance just to use export function
     Processor proc;
-    string filename = "output_spreadsheet.txt";
+    string filename = "outputSpreadsheet.txt";
     proc.exportSpreadsheet(filename, spreadsheet, rows, cols);
 
     // clean up memory later if needed
