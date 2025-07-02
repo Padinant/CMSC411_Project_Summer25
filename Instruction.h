@@ -19,6 +19,9 @@ const array<string, 5> MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
 const array<string, 7> ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
 const array<string, 3> CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
 
+const array<string, 4> INSTRUCTION_UNITS = {"INT", "D.ADD", "D.MULT", "D.DIV"};
+
+
 const array<string, 5> DEFAULT_PIPELINE_STAGES = {"IF", "ID", "EX", "MEM", "WB"};
 
 const int NUM_INT_EXECUTES = 1;
@@ -68,6 +71,14 @@ public:
   // Preconditions: myType is initialized
   void setCategory();
 
+  // getUnit() - returns unit (if m_unit is "", calculates it first then returns)
+  // Preconditions: myType is initialized
+  string getUnit();
+
+  // setUnit() - calculates and sets unit based on the type
+  // Preconditions: myType is initialized
+  void setUnit();
+
   // getPlaintext() - returns plaintext
   // Preconditions: plaintext is initialized
   // Postconditions: None
@@ -115,6 +126,9 @@ public:
   // Returns the most recently logged stage. If stage log is empty, return ""
   string getLatestStageLog();
 
+  // Uses getLatestStageLog to predict what the next expected stage log should be
+  // Precondition: IF stage has already been completed
+  string getNextExpectedStageLog(string prevStage);
 
 
 private:
@@ -126,6 +140,7 @@ private:
   string m_s2;
   string m_myType;  // for example, "ADD" or "BNE"
   string m_category; // "ALU", "MEMORY", "CONTROL"
+  string m_unit; // "INT", "D.ADD", "D.MULT", "D.DIV"
 
   // attributes related to instruction state
   bool m_isActive; // defaults true, unless proven false by branch selection - only continue the row for active instructions

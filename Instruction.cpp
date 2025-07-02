@@ -109,6 +109,54 @@ void Instruction::setCategory(){
 
 }
 
+// getUnit() - returns unit (if m_unit is "", calculates it first then returns)
+// Preconditions: myType is initialized
+string Instruction::getUnit(){
+    // get unit if it is one of ("INT", "D.ADD", "D.MULT", "D.DIV")
+    if (m_unit == "INT" or m_unit == "D.ADD" or m_unit == "D.MULT" or m_unit == "D.DIV"){
+        return m_unit;
+    }
+
+    // otherwise, calculate it then return unit
+    setUnit();
+    return m_unit;
+}
+
+// setUnit() - calculates and sets unit based on the type
+// Preconditions: myType is initialized
+void Instruction::setUnit(){
+    // set unit
+    // check if category is memory or control --> INT
+    string category = getCategory();    // resets category
+    if (category == "CONTROL" or category == "MEMORY"){
+        m_unit = "INT";
+        return;
+    }
+
+    // actually check the unit for ALU instructions
+    if (m_myType == "ADD" or m_myType == "ADDI" or m_myType == "SUB"){
+        m_unit = "INT";
+        return;
+    }
+    if (m_myType == "ADD.D" or m_myType == "SUB.D"){
+        m_unit = "D.ADD";
+        return;
+    }
+    if (m_myType == "MUL.D"){
+        m_unit = "D.MULT";
+        return;
+    }
+    if (m_myType == "DIV.D"){
+        m_unit = "D.DIV";
+        return;
+    }
+
+    // the unexpected scenario (m_myType == "", etc.)
+    m_unit = "";
+
+}
+
+
 // More getters and setters
 string Instruction::getDest(){
     return m_dest;
@@ -173,36 +221,8 @@ void Instruction::pushToStageLog(string stageName){
 // Example: if we have a branch instruction using int unit, and latest stage was "ID", we would push "IF"
 void Instruction::pushToStageLogDefault(){
     string prevStage = getLatestStageLog();
-    if (prevStage == ""){
-        return;
-    }
-    if (prevStage == "STALL"){     // --> [depends]
-        // find the latest none-stall command
-        string prevRelevantStage = "";
-        for (int i = m_stage_log.size() - 1; i >= 0; --i) {
-            if (m_stage_log[i] != "stall") {
-                prevRelevantStage = m_stage_log[i];
-                break;
-            }
-        }
-
-        // It get's slightly inductive here
-        // todo:
-        // pushToStageLog(...);
-        return;
-    }
-    if (prevStage == "IF"){     // --> ID
-        pushToStageLog("ID");
-        return;
-    }
-    if (prevStage == "ID"){      // --> EX [though the exact one depends]
-        // figure out the execute stage's name
-        
-        // pushToStageLog("ID");
-        return;
-    } 
-    // the rest is todo later
-
+    string nextStage = getNextExpectedStageLog(prevStage);
+    pushToStageLog(nextStage);
 }
 
 
@@ -213,4 +233,98 @@ string Instruction::getLatestStageLog(){
     }
 
     return m_stage_log.back();  // returns the last element of the vector
+}
+
+
+// Uses getLatestStageLog to predict what the next expected stage log should be
+// Precondition: IF stage has already been completed
+string Instruction::getNextExpectedStageLog(string prevStage){
+    // this is a helper function to pushToStageLogDefault()
+    if (prevStage == ""){   // unexpected
+        return "";
+    }
+    if (prevStage == "STALL"){     // STALL --> [depends]
+        // find the latest none-stall command
+        string prevRelevantStage = "";
+        for (int i = m_stage_log.size() - 1; i >= 0; --i) {
+            if (m_stage_log[i] != "stall") {
+                prevRelevantStage = m_stage_log[i];
+                break;
+            }
+        }
+
+        // It get's slightly inductive here
+        return getNextExpectedStageLog(prevRelevantStage);
+    }
+    if (prevStage == "IF"){     //IF --> ID
+        return "ID";
+    }
+    if (prevStage == "ID"){      // ID --> EX [though the exact one depends]
+        // figure out the execute stage's name
+        string unit = getUnit();    // this makes sure the unit is updated
+
+        if (m_unit == "INT"){
+            return "EX";
+        }
+        if (m_unit == "D.ADD"){
+            return (DOUBLE_ADD_EXECUTE_PREFIX + "1");
+        }
+        if (m_unit == "D.MULT"){
+            return (DOUBLE_MULT_EXECUTE_PREFIX + "1");
+        }
+        if (m_unit == "D.DIV"){
+            return (DOUBLE_DIV_EXECUTE_PREFIX + "1");
+        }
+        // unexpected
+        return "";
+    } 
+
+    // skipping the execute stage for now (see below)
+
+    if (prevStage == "MEM"){     // MEM --> WB
+        return "WB";
+    }
+    if (prevStage == "WB"){     // WB --> ""
+        return "";
+    }
+
+    // EXECUTE STAGES
+    if (prevStage == "EX"){     // EX --> MEM (or "" if it's a control instruction)
+        if (m_category == "CONTROL"){
+            return "";
+        }
+        return "MEM";
+    }
+
+    string s1 = prevStage.substr(0, 1);  // first character
+    string s2 = prevStage.substr(1);     // everything else
+    
+    if (s2 == ""){  // unexpected
+        return "";
+    }
+
+    int s2_int = stoi(s2);      // the int version for s2
+
+    if (s1 == DOUBLE_ADD_EXECUTE_PREFIX){
+        if (s2_int < NUM_DOUBLE_ADD_EXECUTES){
+            return (s1 + to_string(s2_int + 1));
+        }
+        return "MEM";
+    }
+    if (s1 == DOUBLE_MULT_EXECUTE_PREFIX){
+        if (s2_int < NUM_DOUBLE_MULT_EXECUTES){
+            return (s1 + to_string(s2_int + 1));
+        }
+        return "MEM";
+    }
+    if (s1 == DOUBLE_DIV_EXECUTE_PREFIX){
+        if (s2_int < NUM_DOUBLE_DIV_EXECUTES){
+            return (s1 + to_string(s2_int + 1));
+        }
+        return "MEM";
+    }
+
+
+    // anything else unexpected
+    return "";
 }
