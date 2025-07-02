@@ -62,7 +62,7 @@ public:
   // convert memory address (from instructions) to a memory index between 0-18 inclusive
   // Example: mem_address = "0($1)" ---> 1
   // Example: mem_address = "$7" ---> 7
-  int memory_address_to_index(string mem_address);
+  int memoryAddressToIndex(string memAddress);
 
 
 
