@@ -147,9 +147,28 @@ void Processor::startProcessor(){
     */ 
 
     // The Pipeline Loop
-    
-}
+    bool pipeline_active = true;
 
+    // reset some variables just in case
+    m_clock = 0;
+    m_instruction_pointer = 0;
+    m_first_alive_instruction_ptr = 0;
+
+    while(pipeline_active){
+        // Each Iteration is a cycle
+        bool stall_all_the_way_down = false;    // when this is true, every instruction below stalls
+
+        // TODO: deal with instructions already in m_pipeline
+        if (not m_pipeline.empty()){
+            // ADD CODE HERE LATER
+        }
+
+        // fetch the next instruction if not stalling AND there are more instructions to fetch
+        if (!stall_all_the_way_down and (m_instruction_pointer >= m_instructions_len)){
+            // todo
+        }
+    }
+}
 
 
 // fetches the next instruction from m_instructions (corresponds to the IF stage)
