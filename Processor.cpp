@@ -168,8 +168,11 @@ void Processor::startProcessor(){
 
         // fetch the next instruction if not stalling AND there are more instructions to fetch
         if (!stall_all_the_way_down and (m_instruction_pointer >= m_instructions_len)){
-            // todo
+            Instruction newInst = instructionFetch();
+            m_pipeline.push_back(newInst);
         }
+
+        // update some pipeline-related variable to update the cycle
     }
 }
 
