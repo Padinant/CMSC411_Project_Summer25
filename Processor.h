@@ -53,6 +53,8 @@ public:
   
   // NEW (not yet in Processor.cpp)
   // loads data from register into memory
+  // 19 --> 19%(18+1) = 0
+  // 20 --> 20%19 = 1
   void store(string register_address, string memory_address);
 
   // NEW 
