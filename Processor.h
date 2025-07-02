@@ -136,6 +136,9 @@ private:
   // logistics attributes about pipelining
   vector<Instruction> m_pipeline; // This vector represents all the instructions within the pipeline, in order of being fetched
   int m_clock = 0; // corresponds to the current cycle within the entire pipeline (pipeline starts at clock cycle 1)
+  int m_first_alive_instruction_ptr = 0; // points at the place in pipeline, with the first alive instruction to start on
+  //                                     // if this is the same as the pipeline size, it probably means there isn't any alive instructions
+
 };
  
 #endif

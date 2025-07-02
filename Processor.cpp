@@ -60,7 +60,7 @@ void Processor::loadInstructions(string filename){
     for (int i = 0; i < const_len; i++) {
         instructions[i] = "";  // Explicitly setting each index to "" so compiler doesn't complain 
     }
-    
+
     m_instructions = instructions;
 
     // loop 2: For each instruction in the file, create an object and load it into the m_instructions array
@@ -91,6 +91,27 @@ void Processor::loadInstructions(string filename){
 
 
 // PIPELINING IMPLEMENTATION FUNCTIONS:
+
+// KEY FUNCTION: startProcessor()
+// This function would be called to start and run the simulated pipeline
+// Precondition: loadInstructions() has been called to load the instructions
+// Postcondition: when done, would also save the pipeline results into a new file
+void Processor::startProcessor(){
+    /* How the processor works:
+    - Precondition: load instructions (should be done before calling startProcessor)
+    - start pipeline loop (main portion) - 1 iteration corresponds to 1 clock cycle:
+        - look at every instruction already in the pipeline and have them progress by 1 step
+            - if any is stalling, everything after would also stall, and we'd skip the IF part    
+            - otherwise, instruction fetch from the next line (if not empty line), and increment the pointer
+    - when the loop is done, and no active instruction is left in the pipeline, convert the pipeline into 2D array
+    - export the array into a text file
+    */ 
+
+    // The Pipeline Loop
+    
+}
+
+
 
 // fetches the next instruction from m_instructions (corresponds to the IF stage)
 // creates instruction object + update pointer (+ todo later: figure out branch prediction at this stage)
