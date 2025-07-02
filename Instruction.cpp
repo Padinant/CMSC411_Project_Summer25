@@ -65,12 +65,48 @@ void Instruction::setType(string type){
     m_myType = type;
 }
 
-// getCategory() - returns category based on the type
+// getCategory() - returns category (if m_category is "", calculates it first then returns)
 // Preconditions: myType is initialized
-string Instruction::getType(){
-    switch (m_myType){
-
+string Instruction::getCategory(){
+    // get category if it is one of ("ALU", "MEMORY", "CONTROL")
+    if (m_category == "ALU" or m_category == "MEMORY" or m_category == "CONTROL"){
+        return m_category;
     }
+
+    // otherwise, calculate it then return category
+    setCategory();
+    return m_category;
+}
+
+// setCategory() - calculates and sets category based on the type
+// Preconditions: myType is initialized
+void Instruction::setCategory(){
+    // set category
+    // check if m_myType in ALU_INSTRUCTIONS
+    for (int i = 0; i < 7; i++){
+        if (m_myType == ALU_INSTRUCTIONS[i]){
+            m_category = "ALU";
+            return;
+        }
+    }
+
+    for (int i = 0; i < 5; i++){
+        if (m_myType == MEMORY_INSTRUCTIONS[i]){
+            m_category = "MEMORY";
+            return;
+        }
+    }
+    
+    for (int i = 0; i < 3; i++){
+        if (m_myType == CONTROL_INSTRUCTIONS[i]){
+            m_category = "CONTROL";
+            return;
+        }
+    }
+
+    // the unexpected scenario (m_myType == "")
+    m_category = "";
+
 }
 
 // More getters and setters

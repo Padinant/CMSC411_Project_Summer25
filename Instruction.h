@@ -47,6 +47,14 @@ public:
   // Postconditions: None
   void setType(string type);
 
+  // getCategory() - returns category (if m_category is "", calculates it first then returns)
+  // Preconditions: myType is initialized
+  string getCategory();
+
+  // setCategory() - calculates and sets category based on the type
+  // Preconditions: myType is initialized
+  void setCategory();
+
   // getPlaintext() - returns plaintext
   // Preconditions: plaintext is initialized
   // Postconditions: None
@@ -86,6 +94,7 @@ private:
   string m_s1;
   string m_s2;
   string m_myType;  // for example, "ADD" or "BNE"
+  string m_category; // "ALU", "MEMORY", "CONTROL"
 
   // attributes related to instruction state
   bool m_isActive; // defaults true, unless proven false by branch selection - only continue the row for active instructions
