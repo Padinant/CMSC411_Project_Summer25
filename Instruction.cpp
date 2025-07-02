@@ -221,7 +221,7 @@ void Instruction::pushToStageLog(string stageName){
 // Example: if we have a branch instruction using int unit, and latest stage was "ID", we would push "IF"
 void Instruction::pushToStageLogDefault(){
     string prevStage = getLatestStageLog();
-    string nextStage = getNextExpectedStageLog();
+    string nextStage = getNextExpectedStageLog(prevStage);
     pushToStageLog(nextStage);
 }
 
