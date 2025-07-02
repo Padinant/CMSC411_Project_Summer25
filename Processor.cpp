@@ -19,6 +19,9 @@ Processor::Processor(){
     m_instructions;
     m_filename = "";
     m_clock = 0;
+    for (int i = 0; i < 19; i++) {
+        m_memory[i] = DEFAULT_MEMORY[i];
+    }
 }
 
 Processor::Processor(string filename){
@@ -178,7 +181,7 @@ Instruction Processor::instructionFetch(){
     // Creates instruction class and loads relevant attributes (ignore any labels at the beginning)
     // Updates instruction pointer (this is currently just pointer +1, todo: add branch prediction capabilities)
 
-    // // part 0 - would be done before the function was
+    // // part 0 - would be done before the function was called
     // if (m_instruction_pointer >= m_instructions_len){
     //     // pointer out of range - we've reached the end of the program
     //     return;
