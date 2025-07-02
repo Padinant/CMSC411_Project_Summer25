@@ -16,10 +16,10 @@
 using namespace std;
 
 // Constants corresponding to instruction categories and types
-const array<string, 3> INSTRUCTION_CATEGORIES = {"ALU", "MEMORY", "CONTROL"};
-const array<string, 5> MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
-const array<string, 7> ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
-const array<string, 3> CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
+// const array<string, 3> INSTRUCTION_CATEGORIES = {"ALU", "MEMORY", "CONTROL"};
+// const array<string, 5> MEMORY_INSTRUCTIONS = {"L.D", "L.I", "SD", "LW", "SW"};
+// const array<string, 7> ALU_INSTRUCTIONS = {"ADD", "ADDI", "ADD.D", "SUB.D", "SUB", "MUL.D", "DIV.D"};
+// const array<string, 3> CONTROL_INSTRUCTIONS = {"BEQ", "BNE", "J ADDR"};
 const array<int, 19> DEFAULT_MEMORY = {45, 12, 0, 92, 10, 135, 254, 127, 18, 4,55, 8, 2, 98, 13, 5, 233, 158, 167};
 
  
@@ -50,13 +50,13 @@ public:
 
   // NEW (not yet in Processor.cpp)
   // loads data from memory into register
-  void load(string register_address, string memory_address);
+  void load(string regAddress, string memAddress);
   
   // NEW (not yet in Processor.cpp)
   // loads data from register into memory
   // 19 --> 19%(18+1) = 0
   // 20 --> 20%19 = 1
-  void store(string register_address, string memory_address);
+  void store(string regAddress, string memAddress);
 
   // NEW 
   // convert memory address (from instructions) to a memory index between 0-18 inclusive
