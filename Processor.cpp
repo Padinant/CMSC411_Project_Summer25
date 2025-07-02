@@ -40,6 +40,19 @@ Processor::~Processor(){
     //    // m_instructions
 }
 
+// PUBLIC HELPERS FOR TESTING
+void Processor::setRegisterValue(string reg, int value) {
+    m_registers[reg] = value;
+}
+
+int Processor::getMemoryValue(int index) {
+    if (index >= 0 && index < 19) {
+        return m_memory[index];
+    }
+    return -1;
+}
+
+
 // loads instructions from the given file name into m_instructions
 // Preconditions: filename contains the load instructions
 // Note: currently, only loads plaintext instructions
@@ -93,6 +106,26 @@ void Processor::loadInstructions(string filename){
     } else {
         cout << "Error opening instructions file";
     }
+}
+
+void Processor::store(string reg_address, string mem_address){
+    // Extracting the register index
+    int reg_index = atoi(reg_address.substr(1).c_str());
+
+    // Getting the value stored in the the register
+    int value = m_registers[reg_address];
+
+    // To convert it to an actual index
+    int mem_index = memoryAddressToIndex(mem_address);
+
+    // Make sure the index returned was valid and not -1 in case of an error
+    if (mem_index < 0 || mem_index >= 19) {
+        cout << "Invalid memory index returned by memoryAddressToIndex(): " << mem_index << endl;
+        return;
+    }
+
+    // To store the value into memory
+    m_memory[mem_index] = value;
 }
 
 int Processor::memoryAddressToIndex(string memAddress){
