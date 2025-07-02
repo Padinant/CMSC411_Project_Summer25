@@ -9,18 +9,18 @@ using namespace std;
 class BranchPredictor{
 public:
     // Constructor and Destructor
-    Instruction();
-    ~Instruction();
+    BranchPredictor();
+    ~BranchPredictor();
     // get or update prediction
     getPrediction();
     updatePrediction();
 
-    // Function Definitions
-    Instruction(){
-        m_prediction = true;    // prediction is initially true
-    }
+    // // Function Definitions
+    // BranchPredictor::Instruction(){
+    //     m_prediction = true;    // prediction is initially true
+    // }
 
-    ~Instruction(){}
+    // ~Instruction(){}
     
     getPrediction(){
         // returns prediction of the branch predictor
