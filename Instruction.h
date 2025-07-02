@@ -94,7 +94,7 @@ private:
   // attributes relating to Branch Prediction and CONTROL category instructions
   // note: these are only referenced or changed for control instructions
   // in all these attributes, the value being -1 means the variable is unkown (or irrelevant)
-  int m_ptr_to_not_taken = -1; // corresponds to an index of the instruction on m_instructions
+  int m_ptr_to_taken = -1; // corresponds to an index of the instruction on m_instructions
   int m_ptr_to_not_taken = -1; // corresponds to an index of the instruction on m_instructions
   int m_predicted_taken = -1;  // 1=yes, 0=no
   int m_actual_taken = -1;  // 1=yes, 0=no

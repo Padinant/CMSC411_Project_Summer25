@@ -53,7 +53,15 @@ public:
   
   // NEW (not yet in Processor.cpp)
   // loads data from register into memory
+  // 19 --> 19%(18+1) = 0
+  // 20 --> 20%19 = 1
   void store(string register_address, string memory_address);
+
+  // NEW 
+  // convert memory address (from instructions) to a memory index between 0-18 inclusive
+  // Example: mem_address = "0($1)" ---> 1
+  // Example: mem_address = "$7" ---> 7
+  int memory_address_to_index(string mem_address);
 
 
 
@@ -122,7 +130,7 @@ private:
   int m_instruction_pointer = 0;  // points at the place in m_instruction, where the next instruction is supposed to be
   
   // memory and registers
-  int m_memory[18] = {0};   // when initializing the processor, set as memory values from the writeup
+  int m_memory[19] = {0};   // when initializing the processor, set as memory values from the writeup (0-18 inclusive)
   map<string, int> m_registers = {};  // represents registers and the values stored in them
 
   // logistics attributes about pipelining
