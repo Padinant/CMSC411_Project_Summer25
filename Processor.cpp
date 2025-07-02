@@ -114,7 +114,7 @@ int Processor::memoryAddressToIndex(string memAddress){
     // Checking if there are opening and closing parantheses that are not empty
     if (openParen != -1 && closeParen != -1 && closeParen > openParen + 1) {
         // Taking out contents from the parantheses
-        string reg = mem_address.substr(openParen + 1, closeParen - openParen - 1);
+        string reg = memAddress.substr(openParen + 1, closeParen - openParen - 1);
         // Making sure the reg starts with $ and followed by somehting else
         if (reg.length() > 1 && reg[0] == '$') {
             int reg_index = atoi(reg.substr(1).c_str());
@@ -124,7 +124,7 @@ int Processor::memoryAddressToIndex(string memAddress){
     }
 
     // Something went wrong
-    return 0;
+    return -1;
 }
 
 
