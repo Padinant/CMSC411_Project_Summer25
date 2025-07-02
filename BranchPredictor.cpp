@@ -12,8 +12,8 @@ public:
     BranchPredictor();
     ~BranchPredictor();
     // get or update prediction
-    getPrediction();
-    updatePrediction();
+    bool getPrediction();
+    void updatePrediction();
 
     // // Function Definitions
     // BranchPredictor::Instruction(){
@@ -22,12 +22,12 @@ public:
 
     // ~Instruction(){}
     
-    getPrediction(){
+    bool getPrediction(){
         // returns prediction of the branch predictor
         return m_prediction;
     }
     
-    updatePrediction(){
+    void updatePrediction(){
         // Precondition: call this only when the prediction was not correct
         m_prediction = !m_prediction;
     }
@@ -35,4 +35,4 @@ public:
 private:
     bool m_prediction;
 
-}
+};
