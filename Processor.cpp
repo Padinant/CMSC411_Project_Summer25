@@ -56,7 +56,11 @@ void Processor::loadInstructions(string filename){
     // Update the length of m_instructions
     m_instructions_len = len;
     const int const_len = len;  // need a constant
-    string instructions[const_len] = {""}; // filled with empty strings
+    string instructions[const_len]; // will be filled with empty strings
+    for (int i = 0; i < const_len; i++) {
+        instructions[i] = "";  // Explicitly setting each index to "" so compiler doesn't complain 
+    }
+    
     m_instructions = instructions;
 
     // loop 2: For each instruction in the file, create an object and load it into the m_instructions array
