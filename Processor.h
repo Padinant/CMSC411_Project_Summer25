@@ -74,6 +74,17 @@ public:
   // Invalid Example: register_address = "5" ---> -1
   int registerAddressToIndex(string register_address);
 
+  // given a string with '(' and ')', returns the substring inside those brackets
+  // if unsuccessful, return ""
+  // precondition: text ends in the character ')'
+  string getSubstringInsideBrackets(string text);
+
+  // given a string with '(', returns the substring before reaching those
+  // if unsuccessful, return ""
+  // precondition: text ends in the character '('
+  string getSubstringBeforeBrackets(string text);
+
+
 
 
   // PIPELINING IMPLEMENTATION FUNCTIONS:

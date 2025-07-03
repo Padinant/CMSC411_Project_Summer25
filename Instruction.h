@@ -160,6 +160,7 @@ private:
 
   // int attributes for values of instruction operands - (-1 implies unknow so far/irrelevant)
   // these would be updated during the ID stage (and also stall stages happening right after the ID stage)
+  // note: if s1Val is -1, it might also be because it is a label, and labels cannot be represented as ints
   int m_destVal = -1;
   int m_s1Val = -1;
   int m_s2Val = -1;

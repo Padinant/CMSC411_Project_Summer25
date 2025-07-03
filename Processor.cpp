@@ -224,6 +224,52 @@ int Processor::registerAddressToIndex(string register_address){
     }
 }
 
+
+// given a string with '(' and ')', returns the substring inside those brackets
+// if unsuccessful, return ""
+// precondition: text ends in the character ')'
+// note: this is a helper function for these operands: offset(addr)
+// Example: "100($4)" --> "$4"
+string Processor::getSubstringInsideBrackets(string text){
+    // Check the precondition: must end with ')' and not be empty
+    if (text.empty() or text.back() != ')') {
+        return "";
+    }
+
+    // Find the position of the last closing ')'
+    int posClose = text.size() - 1; // index of the last char
+
+    // Find the first '('
+    int posOpen = text.find('(');
+    if (posOpen == string::npos) {
+        return "";  // no '(' found or nothing inside
+    }
+
+    // Get the substring between '(' and ')'
+    return text.substr(posOpen + 1, posClose - posOpen - 1); // I hope this is right
+}
+
+// given a string with '(', returns the substring before reaching those
+// if unsuccessful, return ""
+// precondition: text ends in the character '('
+// note: this is a helper function for these operands: offset(addr)
+// Example: "100($4)" --> "100"
+string Processor::getSubstringBeforeBrackets(string text){
+    if (text.empty()) {
+        return "";
+    }
+
+    // Find the first '('
+    int posOpen = text.find('(');
+    if (posOpen == string::npos) {
+        return "";  // no '(' found or nothing inside
+    }
+
+    // Get the substring before '('
+    return text.substr(0, posOpen);
+}
+
+
 // PIPELINING IMPLEMENTATION FUNCTIONS:
 
 // KEY FUNCTION: startProcessor()
@@ -431,73 +477,125 @@ void Processor::instructionDecode(Instruction inst){
     //
 }
 
-  // finds the int values of the dependencies for a given instruction (is helper to instructionDecode())
-  // if s2 doesn't exist, save the value as -1
-  // if something is an immediate, save the value as itself
-  // Precondition: IF stage has been called so we do know the names of the operands
-  void Processor::getOperandVals(Instruction x){
+// NOTE: DUE TO REGISTER ISSUES, THIS IS POTENTIALLY INCOMPLETE
+// finds the int values of the dependencies for a given instruction (is helper to instructionDecode())
+// if s2 doesn't exist, save the value as -1
+// if something is an immediate, save the value as itself
+// Precondition: IF stage has been called so we do know the names of the operands
+void Processor::getOperandVals(Instruction x){
     // find the register/memory values per operand
     string dest = x.getDest();
     string s1 = x.getS1();
     string s2 = x.getS2();
     // Destination - always a register
-    int destVal = m_registers[registerAddressToIndex(dest)];
-    x.setDestVal(destVal);
-    
-    // S1 - might be: register, imediate, memory address
+    int destRegisterNum = registerAddressToIndex(dest);
+    if (dest[0] == '$'){
+        // int register
+        x.setDestVal(m_registersInt[destRegisterNum]);
+
+    } else if (dest[0] == 'F') {
+        // float register
+        x.setDestVal(m_registersF[destRegisterNum]);
+    } else {
+        // unexpected
+        x.setDestVal(-1);
+    }
+
+    // S1 - might be: register, imediate, memory address --> (as in: offset(addr)), label
     string p1 = s1.substr(0, 1);  // first character
     string p2 = s1.substr(1);     // everything else
 
-    if (p1 == "F"){ // assume it's a register
-        int s1Val = m_registers[registerAddressToIndex(s1)];
+    if (p1 == "F"){ // assume it's a register name
+        int s1Val = m_registersInt[registerAddressToIndex(s1)];
+        x.setS1Val(s1Val);
+    } else if (p1 == "$"){ // also assume it's a register
+        int s1Val = m_registersF[registerAddressToIndex(s1)];
         x.setS1Val(s1Val);
     } else {
-        // If there it ends in ')' assume it's memory address
+        // If there it ends in ')' assume it's offset(addr) - otherwise, it's an immediate
         string pf = s1.substr(s1.size() - 1); // the final character
         if (pf == ")"){
-            // memory address
-            int s1Val = 
-            m_memory[memoryAddressToIndex(s1)];
+            // memory address or int register address or F register address + offset
+            string addr = getSubstringInsideBrackets(s1);
+            int offset = stoi(getSubstringBeforeBrackets(s1)); // assuming that this can be converted to a num
             
-            x.setS1Val(s1Val);
+            string subp1 = addr.substr(0, 1);  // first character
+            string subp2 = addr.substr(1);     // everything else
+            if (subp1 == "$"){ // assume addr is an int register name
+                int s1Val = m_registersInt[(registerAddressToIndex(addr) + offset) % 32];
+                x.setS1Val(s1Val);
+            } else if (subp1 == "F"){ // also assume addr is a Float register name
+                int s1Val = m_registersF[(registerAddressToIndex(addr) + offset) % 32];
+                x.setS1Val(s1Val);
+            } else { // assume addr is an immediate (representing the memory location)
+                int s1Val = m_memory[(stoi(addr) + offset) % 19];
+                x.setS1Val(s1Val);
+            }
+
         } else {
-            // valid integer immediate
-            x.setS1Val(stoi(p2));
+            // valid integer immediate (if we can convert to int) OR label (if we can't convert to int)
+            
+            try {
+                // immediate
+                int number = stoi(s1);
+                x.setS1Val(number);
+            } catch (const invalid_argument& e) {
+                // label name
+                x.setS1Val(-1);
+            }
         }
     }
 
-    // S2 - potentially non-existend --> -1
+    // S2 - potentially non-existant --> -1
     if (s2 == ""){
         x.setS2Val(-1);
     } else {
-        // otherwise, same as S1
-        // S2 - might be: register, imediate, memory address
+        // otherwise, mostly the same as S1
+        // S2 - might be: register, imediate, memory address --> (as in: offset(addr))
         string p1 = s2.substr(0, 1);  // first character
         string p2 = s2.substr(1);     // everything else
 
-        if (p1 == "F"){ // assume it's a register
-            int s2Val = m_registers[registerAddressToIndex(s2)];
+        if (p1 == "F"){ // assume it's a register name
+            int s2Val = m_registersInt[registerAddressToIndex(s2)];
+            x.setS2Val(s2Val);
+        } else if (p1 == "$"){ // also assume it's a register
+            int s2Val = m_registersF[registerAddressToIndex(s2)];
             x.setS2Val(s2Val);
         } else {
-            // If there it ends in ')' assume it's memory address
+            // If there it ends in ')' assume it's offset(addr) - otherwise, it's an immediate
             string pf = s2.substr(s2.size() - 1); // the final character
             if (pf == ")"){
-                // memory address
-                int s2Val = 
-                m_memory[memoryAddressToIndex(s2)];
+                // memory address or int register address or F register address + offset
+                string addr = getSubstringInsideBrackets(s2);
+                int offset = stoi(getSubstringBeforeBrackets(s2)); // assuming that this can be converted to a num
                 
-                x.setS2Val(s2Val);
+                string subp1 = addr.substr(0, 1);  // first character
+                string subp2 = addr.substr(1);     // everything else
+                if (subp1 == "$"){ // assume addr is an int register name
+                    int s2Val = m_registersInt[(registerAddressToIndex(addr) + offset) % 32];
+                    x.setS2Val(s2Val);
+                } else if (subp1 == "F"){ // also assume addr is a Float register name
+                    int s2Val = m_registersF[(registerAddressToIndex(addr) + offset) % 32];
+                    x.setS2Val(s2Val);
+                } else { // assume addr is an immediate (representing the memory location)
+                    int s2Val = m_memory[(stoi(addr) + offset) % 19];
+                    x.setS2Val(s2Val);
+                }
+
             } else {
-                // valid integer immediate
-                x.setS2Val(stoi(p2));
+                // valid integer immediate (if we can convert to int)
+                try {
+                    // immediate
+                    int number = stoi(s2);
+                    x.setS2Val(number);
+                } catch (const invalid_argument& e) {
+                    // I don't think it might be a label name, but this is still a good catch for exceptions
+                    x.setS2Val(-1);
+                }
             }
         }
-
     }
-
-
-
-  }
+}
 
 
 void Processor::convertPipline(){
