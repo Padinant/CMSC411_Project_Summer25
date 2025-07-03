@@ -147,6 +147,12 @@ private:
   string m_category; // "ALU", "MEMORY", "CONTROL"
   string m_unit; // "INT", "D.ADD", "D.MULT", "D.DIV"
 
+  // // int attributes for values of instruction operands 
+  // // these are commented for now, because registers are meant to be shared resources
+  // int m_destVal = -1;
+  // int m_s1Val = -1;
+  // int m_s2Val = -1;
+
   // attributes related to instruction state
   bool m_isActive; // defaults true, unless proven false by branch selection - only continue the row for active instructions
   bool m_hasEnded; // defaults false, and is set to true when instruction ends - only continue the row if !hasEnded

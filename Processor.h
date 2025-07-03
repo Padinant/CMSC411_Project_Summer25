@@ -167,6 +167,10 @@ private:
   vector<string> m_heldUpWrite;
   vector<string> m_availableNextCycleWrite; // would be treated as nonexistant for forwarding between loads and stores (in case of WAR not RAW)
 
+  // note: these two are only used in case of loads and stores, where we might be able to read and write to a register on the same cycle
+  vector<string> registerRAW_WriteTracker;
+  vector<string> registerRAW_ReadTracker;
+
 };
  
 #endif
