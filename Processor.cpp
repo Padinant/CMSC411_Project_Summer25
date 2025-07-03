@@ -231,6 +231,35 @@ void Processor::startProcessor(){
         // TODO: deal with instructions already in m_pipeline
         if (not m_pipeline.empty()){
             // ADD CODE HERE LATER
+            // for each instruction in the pipeline...
+            for (int i = 0; i < m_pipeline.size(); i++){
+                // check if stalling
+                // check if not breaking any rules/hazards for forwarding
+                    // potentially update stall_all_the_way_down
+                // apply instruction if 
+                // update the two forwarding queues
+                // end instruction if we are done
+                // update pointer if we had a branch prediction or branch decision
+
+                if (stall_all_the_way_down){
+                    // set instruction to stall
+                } else {
+                    // progress instruction by 1 stage (if possible)
+                }
+            }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         }
 
         // fetch the next instruction if not stalling AND there are more instructions left to fetch
