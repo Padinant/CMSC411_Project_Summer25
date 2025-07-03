@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <array>
+#include <algorithm>
 #include "Processor.h"
 using namespace std;
 
@@ -236,24 +237,50 @@ void Processor::startProcessor(){
             Instruction newInst = instructionFetch();
 
             // update the stage log in newInst
-            //newInst.m_stage_log.push_back("IF");    // note: will edit this line, this is stock code
+            newInst.pushToStageLog("IF");    // pushes "IF" to the back of the stage log
 
             // add newInst to the end of the pipeline
             m_pipeline.push_back(newInst);
         }
 
         // update some pipeline-related variable to update the cycle
+        m_instruction_pointer += 1;
+        m_clock += 1;
 
+        // EXIT CONDITIONS: check if we are done - 
+        // ie: if every instruction in pipeline is dead, and there is no instructions left to fetch
+        if (m_instruction_pointer >= m_instructions_len){
+            if (m_pipeline.empty()){
+                pipeline_active = false;
+            } else {
+                // check every pipeline instruction to see that it's not alive 
+                // using a lambda expression, none_of(), and getIsAlive()
+                if (none_of(m_pipeline.begin(), m_pipeline.end(), 
+                [](Instruction &x) { return x.getIsAlive(); })){
+                    pipeline_active = false;
+                }
+            }
+        }
     }
+
+    // We have exited the while loop
+
+    // Step: convert the pipeline into 2D array
+    // Step: export the array into a text file
+
+
+    // We are done!
 }
 
 
 // fetches the next instruction from m_instructions (corresponds to the IF stage)
-// creates instruction object + update pointer (+ todo later: figure out branch prediction at this stage)
+// creates and returns instruction object
 Instruction Processor::instructionFetch(){
     // Loads instruction plaintext (if any exist at address)
     // Creates instruction class and loads relevant attributes (ignore any labels at the beginning)
-    // Updates instruction pointer (this is currently just pointer +1, todo: add branch prediction capabilities)
+
+    // NOTE: things this function no longer does:
+    // Updates instruction pointer (this is currently just pointer +1)
 
     // // part 0 - would be done before the function was called
     // if (m_instruction_pointer >= m_instructions_len){
@@ -305,17 +332,18 @@ Instruction Processor::instructionFetch(){
     myInst.setS1(text_b);
     myInst.setS2(text_c);
 
-    // part 3 - update instruction pointer  (TODO: add branch prediction)
-    if (1){
-        // default case
-        m_instruction_pointer += 1;
-    } else {
-        // Use Branch Prediction To Figure Where to Point Next?
-        // todo: add a member attr to keep track of prev pointers if prediction is wrong
-    }
+    // NOTE: parts 3 and 4 are no longer done inside the function
+    // // part 3 - update instruction pointer  (TODO: add branch prediction)
+    // if (1){
+    //     // default case
+    //     m_instruction_pointer += 1;
+    // } else {
+    //     // Use Branch Prediction To Figure Where to Point Next?
+    //     // todo: add a member attr to keep track of prev pointers if prediction is wrong
+    // }
 
-    // part 4
-    m_pipeline.push_back(myInst);
+    // // part 4
+    // m_pipeline.push_back(myInst); // Note: this should now be done in startProcessor
     return myInst;  // in later version, don't return myInst, instead just add it to the pipeline
 
 
