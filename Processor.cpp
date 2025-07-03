@@ -365,8 +365,8 @@ void Processor::convertPipline(){
     int num_instructions = m_pipeline.size();
 
     // FInding the num colums/ max ending cycle across all of the instructions
-    int maxCycle = 0;
-    for (int i = 0; i < numInstructions; ++i) {
+    int max_cycle = 0;
+    for (int i = 0; i < num_instructions; ++i) {
         int end;
         if (m_pipeline[i].getIsActive()) {
             end = m_clock;
@@ -381,7 +381,7 @@ void Processor::convertPipline(){
 
     // Creating and intializing 2D array of empty strings
     string** spreadsheet = new string*[num_instructions];
-    for (int i = 0; i < numInstructions; ++i) { // num_instructions are the ros
+    for (int i = 0; i < num_instructions; ++i) { // num_instructions are the ros
         spreadsheet[i] = new string[max_cycle];
         for (int j = 0; j < max_cycle; ++j) { // max_cycle are the columns
             spreadsheet[i][j] = "";
@@ -389,7 +389,7 @@ void Processor::convertPipline(){
     }
 
     // Populating each instructions row based on its stage log
-    for (int i = 0; i < numInstructions; ++i) {
+    for (int i = 0; i < num_instructions; ++i) {
         Instruction inst = m_pipeline[i];
 
         int endCycle;
@@ -406,8 +406,8 @@ void Processor::convertPipline(){
         const vector<string>& stages = inst.m_stage_log;
         // Looping through each stage and putting it in the column it belongs is
         for (int j = 0; j < stages.size(); ++j) {
-                int col = startCycle + j - 1;
-                if (col < maxCycle) {
+                int col = start_cycle + j - 1;
+                if (col < max_cycle) {
                     spreadsheet[i][col] = stages[j];
                 }
             }
