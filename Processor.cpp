@@ -422,12 +422,65 @@ void Processor::instructionDecode(Instruction inst){
   // Precondition: IF stage has been called so we do know the names of the operands
   void Processor::getOperandVals(Instruction x){
     // find the register/memory values per operand
+    string dest = x.getDest();
+    string s1 = x.getS1();
+    string s2 = x.getS2();
     // Destination - always a register
-    // todo
+    int destVal = m_registers[registerAddressToIndex(dest)];
+    x.setDestVal(destVal);
+    
+    // S1 - might be: register, imediate, memory address
+    string p1 = s1.substr(0, 1);  // first character
+    string p2 = s1.substr(1);     // everything else
 
-    // S1
+    if (p1 == "F"){ // assume it's a register
+        int s1Val = m_registers[registerAddressToIndex(s1)];
+        x.setS1Val(s1Val);
+    } else {
+        // If there it ends in ')' assume it's memory address
+        string pf = s1.substr(s1.size() - 1); // the final character
+        if (pf == ")"){
+            // memory address
+            int s1Val = 
+            m_memory[memoryAddressToIndex(s1)];
+            
+            x.setS1Val(s1Val);
+        } else {
+            // valid integer immediate
+            x.setS1Val(stoi(p2));
+        }
+    }
 
-    // S2 - potentially non-existend
+    // S2 - potentially non-existend --> -1
+    if (s2 == ""){
+        x.setS2Val(-1);
+    } else {
+        // otherwise, same as S1
+        // S2 - might be: register, imediate, memory address
+        string p1 = s2.substr(0, 1);  // first character
+        string p2 = s2.substr(1);     // everything else
+
+        if (p1 == "F"){ // assume it's a register
+            int s2Val = m_registers[registerAddressToIndex(s2)];
+            x.setS2Val(s2Val);
+        } else {
+            // If there it ends in ')' assume it's memory address
+            string pf = s2.substr(s2.size() - 1); // the final character
+            if (pf == ")"){
+                // memory address
+                int s2Val = 
+                m_memory[memoryAddressToIndex(s2)];
+                
+                x.setS2Val(s2Val);
+            } else {
+                // valid integer immediate
+                x.setS2Val(stoi(p2));
+            }
+        }
+
+    }
+
+
 
   }
 
