@@ -179,6 +179,28 @@ void Instruction::setS2(string s2){
     m_s2 = s2;
 }
 
+// more getters and setters (int instead of string)
+int Instruction::getDestVal(){
+    return m_destVal;
+}
+void Instruction::setDestVal(int destVal){
+    m_destVal = destVal;
+}
+
+int Instruction::getS1Val(){
+    return m_s1Val;
+}
+void Instruction::setS1Val(int s1Val){
+    m_s1Val = s1Val;
+}
+
+int Instruction::getS2Val(){
+    return m_s2Val;
+}
+void Instruction::setS2Val(int s2Val){
+    m_s2Val = s2Val;
+}
+
 
 
 // functions (getters and setters) for pipeline-related attributes

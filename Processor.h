@@ -69,6 +69,11 @@ public:
   // Example: mem_address = "$7" ---> 7
   int memoryAddressToIndex(string mem_address);
 
+  // convert valid register address (from instructions) to a memory index between 0-31 inclusive
+  // Valid Example: register_address = "F24" ---> 24
+  // Invalid Example: register_address = "5" ---> -1
+  int registerAddressToIndex(string register_address);
+
 
 
   // PIPELINING IMPLEMENTATION FUNCTIONS:
@@ -84,16 +89,14 @@ public:
   // creates instruction object + update pointer (+ todo later: figure out branch prediction at this stage)
   Instruction instructionFetch();
 
-  // NEW (not yet in Processor.cpp)
   // decode a given instruction object and load the values of all delivarables (corresponds to the ID stage)
   // also check if we should stall (ie repeat this stage)
   // would interpret its dependencies, and other relevant details not already known
   void instructionDecode(Instruction inst);
 
-  // NEW (not yet in Processor.cpp)
-  // finds the names of the dependencies for a given instruction (is helper to instructionDecode())
-  // todo: implement a way to return the dependencies (either member attributes, or return a list of register names)
-  void getDependencies(Instruction x);
+  // finds the values of the dependencies for a given instruction (is helper to instructionDecode())
+  // Precondition: IF stage has been called so we do know the names of the operands
+  void getOperandVals(Instruction x);
 
 
   // BRANCH PREDICTION RELATED FUNCTIONS
@@ -166,6 +169,10 @@ private:
   vector<string> m_availableNextCycleRead; // would be treated as nonexistant for forwarding between loads and stores (in case of WAR not RAW)
   vector<string> m_heldUpWrite;
   vector<string> m_availableNextCycleWrite; // would be treated as nonexistant for forwarding between loads and stores (in case of WAR not RAW)
+
+  // note: these two are only used in case of loads and stores, where we might be able to read and write to a register on the same cycle
+  vector<string> registerRAW_WriteTracker;
+  vector<string> registerRAW_ReadTracker;
 
 };
  

@@ -207,6 +207,21 @@ int Processor::memoryAddressToIndex(string memAddress){
     return -1;
 }
 
+// convert valid register address (from instructions) to a memory index between 0-31 inclusive
+// Valid Example: register_address = "F24" ---> 24
+// Invalid Example: register_address = "5" ---> -1
+int Processor::registerAddressToIndex(string register_address){
+    // if the first letter isn't an F, return -1
+    string s1 = register_address.substr(0, 1);  // first character
+    string s2 = register_address.substr(1);     // everything else
+
+    if (s1 != "F"){
+        return -1;
+    } else {
+        // assuming that if there is an F, the rest is a valid number --> the register index
+        return stoi(s2);
+    }
+}
 
 // PIPELINING IMPLEMENTATION FUNCTIONS:
 
@@ -260,6 +275,9 @@ void Processor::startProcessor(){
                 if (stall_all_the_way_down){
                     // set instruction to stall - note: we do not need to modify the forwarding queues in this version
                     currInst.pushToStageLog(STALL_NAME);
+                    // if previous (non-stall) instruction was ID, update the operator values again
+                    // todo: come back here
+
                 } else {
                     // progress instruction by 1 stage (if possible)
                     // Figure out what the expected stage would be
@@ -412,12 +430,20 @@ void Processor::instructionDecode(Instruction inst){
     //
 }
 
-// NEW (not yet implemented in Processor.cpp)
-// finds the names of the dependencies for a given instruction (is helper to instructionDecode())
-// todo: implement a way to return the dependencies (either member attributes, or return a list of register names)
-void Processor::getDependencies(Instruction x){
-    //
-}
+  // finds the int values of the dependencies for a given instruction (is helper to instructionDecode())
+  // if s2 doesn't exist, save the value as -1
+  // if something is an immediate, save the value as itself
+  // Precondition: IF stage has been called so we do know the names of the operands
+  void Processor::getOperandVals(Instruction x){
+    // find the register/memory values per operand
+    // Destination - always a register
+    // todo
+
+    // S1
+
+    // S2 - potentially non-existend
+
+  }
 
 
 void Processor::convertPipline(){
