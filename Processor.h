@@ -13,6 +13,7 @@
 #include <vector>
 #include <array>
 #include "Instruction.h"
+#include "BranchPredictor.cpp"  // note: potentially remove this if it shouldn't be here
 using namespace std;
 
 // Constants corresponding to instruction categories and types
@@ -93,6 +94,16 @@ public:
   // finds the names of the dependencies for a given instruction (is helper to instructionDecode())
   // todo: implement a way to return the dependencies (either member attributes, or return a list of register names)
   void getDependencies(Instruction x);
+
+
+  // BRANCH PREDICTION RELATED FUNCTIONS
+  // Precondition: Instruction is a control instruction, and is at the IF stage
+  // For reference (don't modify these values)
+  // if you predict taken: m_predicted_taken = 1
+  // if you predict not taken: m_predicted_taken = 0
+  // if something unexpected happens and no prediction is made: m_predicted_taken = -1
+  // What this function does: if predict taken: 1, if you predict not taken: 0, unexpected: -1
+  int getBranchPrediction(BranchPredictor bp, Instruction cInst);
 
 
   // NEW

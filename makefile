@@ -13,11 +13,14 @@ testFile: Instruction.o Processor.o testFile.cpp
 driver: Instruction.o Processor.o driver.cpp
 	$(CXX) $(CXXFLAGS) Instruction.o Processor.o driver.cpp -o driver
 
-Processor.o: Processor.h Processor.cpp Instruction.o
+Processor.o: Processor.h Processor.cpp Instruction.o BranchPredictor.o
 	$(CXX) $(CXXFLAGS) -c Processor.cpp
 
 Instruction.o: Instruction.cpp Instruction.h
 	$(CXX) $(CXXFLAGS) -c Instruction.cpp
+
+BranchPredictor.o: BranchPredictor.cpp
+	$(CXX) $(CXXFLAGS) -c BranchPredictor.cpp
 
 
 clean:

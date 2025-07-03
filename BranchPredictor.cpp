@@ -8,12 +8,12 @@ using namespace std;
 
 class BranchPredictor{
 public:
-    // Constructor and Destructor
+    // // Constructor and Destructor
     BranchPredictor();
     ~BranchPredictor();
-    // get or update prediction
-    bool getPrediction();
-    void updatePrediction();
+    // // get or update prediction
+    // bool getPrediction();
+    // void updatePrediction();
 
     // // Function Definitions
     // BranchPredictor::Instruction(){
