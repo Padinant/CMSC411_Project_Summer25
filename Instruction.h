@@ -109,6 +109,10 @@ public:
   bool getIsActive();
   bool getHasEnded(); 
 
+  // setters for initial and final cycles
+  int getInitialCycle();
+  int getFinalCycle();
+
 
   // More complex pipeline-related functions
 

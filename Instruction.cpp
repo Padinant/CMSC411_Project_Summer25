@@ -205,6 +205,14 @@ void Instruction::setS2(string s2){
   }
 
 
+  // setters for initial and final cycles
+  int Instruction::getInitialCycle(){
+    return m_initial_cycle;
+  }
+  int Instruction::getFinalCycle(){
+    return m_final_cycle;
+  }
+
 
 // More complex pipeline-related functions
 
