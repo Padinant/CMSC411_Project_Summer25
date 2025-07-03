@@ -99,6 +99,17 @@ public:
   string getS2();
   void setS2(string s2);
 
+  // more getters and setters (int instead of string)
+  int getDestVal();
+  void setDestVal(int destVal);
+
+  int getS1Val();
+  void setS1Val(int s1Val);
+
+  int getS2Val();
+  void setS2Val(int s2Val);
+
+
 
   // functions (getters and setters) for pipeline-related attributes
 
@@ -147,11 +158,11 @@ private:
   string m_category; // "ALU", "MEMORY", "CONTROL"
   string m_unit; // "INT", "D.ADD", "D.MULT", "D.DIV"
 
-  // // int attributes for values of instruction operands 
-  // // these are commented for now, because registers are meant to be shared resources
-  // int m_destVal = -1;
-  // int m_s1Val = -1;
-  // int m_s2Val = -1;
+  // int attributes for values of instruction operands - (-1 implies unknow so far/irrelevant)
+  // these would be updated during the ID stage (and also stall stages happening right after the ID stage)
+  int m_destVal = -1;
+  int m_s1Val = -1;
+  int m_s2Val = -1;
 
   // attributes related to instruction state
   bool m_isActive; // defaults true, unless proven false by branch selection - only continue the row for active instructions

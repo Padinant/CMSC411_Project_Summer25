@@ -246,7 +246,8 @@ void Processor::startProcessor(){
                 if (stall_all_the_way_down){
                     // set instruction to stall - note: we do not need to modify the forwarding queues in this version
                     currInst.pushToStageLog(STALL_NAME);
-                    // if previous instruction was ID, update the operator values again
+                    // if previous (non-stall) instruction was ID, update the operator values again
+                    // 
 
                 } else {
                     // progress instruction by 1 stage (if possible)
