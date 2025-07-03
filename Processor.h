@@ -34,7 +34,7 @@ public:
   // Overloaded Constructor
   // Preconditions: None
   // Postconditions: None
-  Processor(string filename);
+  Processor(string filename, string outputFile);
  
   // Destructor
   // Preconditions: None
@@ -133,7 +133,8 @@ private:
   // program instruction related attributes
   string* m_instructions; // this corresponds to the plaintext instructions
   int m_instructions_len; // how many instructions in m_instructions (and the instruction file)
-  string m_filename;
+  string m_filename;  // input file name
+  string m_outputFile; // output file name
   int m_instruction_pointer = 0;  // points at the place in m_instruction, where the next instruction is supposed to be
   
   // memory and registers

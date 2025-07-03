@@ -2,7 +2,7 @@
 // File: driver.cpp
 // Desc: This is the driver for the project (ie. the file to run)
 // Date: June 23, 2025
-//Authors: Padina Nasiri Toussi and Qanita Baqibillah
+//Authors: Padina Nasiri Toussi
 
 #include "Instruction.h"
 #include "Processor.h"
@@ -13,11 +13,11 @@ using namespace std;
 
 // main
 int main(){
-    Processor myComputer;
-    // TODO: to be implemented
-    //
-    //
-    //
+    string instructionFile = "InstructionText.txt";
+    string outputFile = "spreadsheet1.txt";
+    Processor myComputer(instructionFile, outputFile);
+    myComputer.loadInstructions(instructionFile);
+    myComputer.startProcessor();
 
     return 0;
 
