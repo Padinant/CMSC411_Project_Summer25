@@ -160,6 +160,7 @@ private:
   string m_myType;  // for example, "ADD" or "BNE"
   string m_category; // "ALU", "MEMORY", "CONTROL"
   string m_unit; // "INT", "D.ADD", "D.MULT", "D.DIV"
+  int m_result = -1; // this represents the calculated result of the instruction --> which would be saved during WB stage
 
   // int attributes for values of instruction operands - (-1 implies unknow so far/irrelevant)
   // these would be updated during the ID stage (and also stall stages happening right after the ID stage)

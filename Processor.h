@@ -84,6 +84,15 @@ public:
   // precondition: text ends in the character '('
   string getSubstringBeforeBrackets(string text);
 
+  // given an int value and an addrLocation (), returns a string representation for the address
+  // Precondition: addrLocation is in ["MEMORY", "R_INT", "R_F"]
+  // Examples:
+  // (5, "MEMORY") --> "5"
+  // (5, "R_INT") --> "$5"
+  // (5, "R_F") --> "F5"
+  // unexpected: --> ""
+  string getIndexToAddressWithoutOffset(int value, string addrLocation);
+
 
 
 

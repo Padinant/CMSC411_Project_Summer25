@@ -269,6 +269,25 @@ string Processor::getSubstringBeforeBrackets(string text){
     return text.substr(0, posOpen);
 }
 
+  // given an int value and an addrLocation (), returns a string representation for the address
+  // Precondition: addrLocation is in ["MEMORY", "R_INT", "R_F"]
+  // Examples:
+  // (5, "MEMORY") --> "5"
+  // (5, "R_INT") --> "$5"
+  // (5, "R_F") --> "F5"
+  // unexpected: --> ""
+  string Processor::getIndexToAddressWithoutOffset(int value, string addrLocation){
+    if (addrLocation == "MEMORY"){
+        return to_string(value);
+    }
+    if (addrLocation == "R_INT"){
+        return ("$" + to_string(value));
+    }
+    if (addrLocation == "R_F"){
+        return ("F" + to_string(value));
+    }
+    return ""; // unexpected
+  }
 
 // PIPELINING IMPLEMENTATION FUNCTIONS:
 
@@ -318,6 +337,15 @@ void Processor::startProcessor(){
                 // update the two forwarding queues
                 // end instruction if we are done
                 // update pointer if we had a branch prediction or branch decision
+                
+
+                // TODO check for inactivity (add logic for that and check it before the stall stage)
+                // for the actual branch selection prediction/determination, that would happen later on
+
+
+
+
+
 
                 if (stall_all_the_way_down){
                     // set instruction to stall - note: we do not need to modify the forwarding queues in this version
@@ -336,9 +364,26 @@ void Processor::startProcessor(){
                     // string expectedStage = currInst.getNextExpectedStageLog(getLatestStageLog());
                     string prevStage = currInst.getLatestStageLog();
                     if (prevStage == DEFAULT_PIPELINE_STAGES[0]){
-                        // IF stage - don't worry about dependencies
+                        // IF stage - don't worry about dependencies being met at this stage
+                        // instead call ID stage 
+                        instructionDecode(currInst);
+                        // and update the forwarding vectors based on operators
+                        string type = currInst.getType();
+                        if (type == "J"){
+                            // skip for now - s1 is a label
+                        } 
+                        // else if (type == ...)
+                        
+                        // // destination
+                        // m_heldUpRead.push_back
+                        // m_heldUpWrite.push_back(currInst.getDestVal())
+                        
                     } else if (prevStage == DEFAULT_PIPELINE_STAGES[4]){
-                        // WB stage - don't worry about dependencies - end the stage
+                        // WB stage - don't worry about dependencies being met at this stage
+                        // 
+                        // end the instruction
+
+                        // and update the forwarding vectors based on operators
                     }
                 }
             }
@@ -479,9 +524,60 @@ Instruction Processor::instructionFetch(){
 // What it doesn't do now: also check if we should stall (ie repeat this stage)
 // What it doesn't do: push "ID to stage log"
 // would interpret its dependencies, and other relevant details not already known
+// if we have a memory function, replace offset(addr) with string(int(offset + addr))
+//      // Example: m_s1 = "10($5)" ----> m_s1 = "$15"
+//      // Example: m_s1 = "32($1)" ----> m_s1 = "$1"
 void Processor::instructionDecode(Instruction &inst){
     // call getOperandVals to find operand values
     getOperandVals(inst);
+
+    // in case of mem functions where an operand name ends in brackets
+    // for S1
+    if (inst.getS1().back() == ')'){
+        int value = inst.getS1Val();
+
+        int intLoc = inst.getS1().find('$'); // location of '$' sign
+        int fLoc = inst.getS1().find('F'); // location of 'F'
+        // if both are -1, we can assume it's a memory address
+
+        if (intLoc != -1){
+            // int register $
+            int num = value % 32;
+            inst.setS1(getIndexToAddressWithoutOffset(num, "R_INT"));
+        } else if (fLoc != -1){
+            // float register F
+            int num = value % 32;
+            inst.setS1(getIndexToAddressWithoutOffset(num, "R_F"));
+        } else {
+            // mem address
+            int num = value % 19;
+            inst.setS1(getIndexToAddressWithoutOffset(num, "MEMORY"));
+        }
+    }
+
+
+    // for S2
+    if (inst.getS2().back() == ')'){
+        int value = inst.getS2Val();
+
+        int intLoc = inst.getS2().find('$'); // location of '$' sign
+        int fLoc = inst.getS2().find('F'); // location of 'F'
+        // if both are -1, we can assume it's a memory address
+
+        if (intLoc != -1){
+            // int register $
+            int num = value % 32;
+            inst.setS2(getIndexToAddressWithoutOffset(num, "R_INT"));
+        } else if (fLoc != -1){
+            // float register F
+            int num = value % 32;
+            inst.setS2(getIndexToAddressWithoutOffset(num, "R_F"));
+        } else {
+            // mem address
+            int num = value % 19;
+            inst.setS2(getIndexToAddressWithoutOffset(num, "MEMORY"));
+        }
+    }
 }
 
 // NOTE: DUE TO REGISTER ISSUES, THIS IS POTENTIALLY INCOMPLETE
