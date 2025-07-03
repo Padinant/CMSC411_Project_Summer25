@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include "Processor.h"
+#include "Instruction.h"
 using namespace std;
 
 class Tester{
@@ -18,6 +19,7 @@ class Tester{
         void testAddressToIndex();
         void testStore();
         void testLoad();
+        void testConvertPipline();
     private:
 
 };
@@ -30,6 +32,7 @@ int main(){
     test.testAddressToIndex();
     test.testStore();
     test.testLoad();
+    test.testConvertPipline();
     return 0;
 }
 
@@ -113,6 +116,11 @@ void Tester::testLoad(){
     int actual = p.getRegisterValue("$10");
 
     cout << "Testing load(): " << endl;
-    cout << "\Register $10 contains " << actual << ". Expected: " << expectedValue << endl;
+    cout << "Register $10 contains " << actual << ". Expected: " << expectedValue << endl;
+}
 
+void Tester::testConvertPipline(){
+    Processor p;
+
+    
 }

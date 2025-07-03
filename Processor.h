@@ -95,7 +95,9 @@ public:
   void getDependencies(Instruction x);
 
 
-
+  // NEW
+  // Converts pipline into 2D array
+  void convertPipline();
 
 
 

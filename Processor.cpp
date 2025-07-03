@@ -41,10 +41,6 @@ Processor::~Processor(){
 }
 
 // PUBLIC HELPERS FOR TESTING
-// void Processor::setRegisterValue(string reg, int value) {
-//     m_registers[reg] = value;
-// }
-
 int Processor::getMemoryValue(int index) {
     if (index >= 0 && index < 19) {
         return m_memory[index];
@@ -336,6 +332,59 @@ void Processor::getDependencies(Instruction x){
     //
 }
 
+
+void Processor::convertPipline(){
+    int num_instructions = m_pipeline.size();
+
+    // FInding the num colums/ max ending cycle across all of the instructions
+    int maxCycle = 0;
+    for (int i = 0; i < numInstructions; ++i) {
+        int end;
+        if (m_pipeline[i].getIsActive()) {
+            end = m_clock;
+        } else {
+            end = m_pipeline[i].m_stage_log.size() + m_pipeline[i].m_initial_cycle;
+        }
+
+        if (end > max_cycle) {
+            max_cycle = end;
+        }
+    }
+
+    // Creating and intializing 2D array of empty strings
+    string** spreadsheet = new string*[num_instructions];
+    for (int i = 0; i < numInstructions; ++i) { // num_instructions are the ros
+        spreadsheet[i] = new string[max_cycle];
+        for (int j = 0; j < max_cycle; ++j) { // max_cycle are the columns
+            spreadsheet[i][j] = "";
+        }
+    }
+
+    // Populating each instructions row based on its stage log
+    for (int i = 0; i < numInstructions; ++i) {
+        Instruction inst = m_pipeline[i];
+
+        int endCycle;
+        // If its still active then it then it uses current clock as end cylce
+        if (inst.getIsActive()) {
+            endCycle = m_clock;
+        } else { // If its inactive then it calculates the end based on how many stages were completed when started
+            endCycle = inst.m_stage_log.size() + inst.m_initial_cycle;
+        }
+
+        // Using the initial cycle find the starting column for the instructions row
+        int start_cycle = inst.m_initial_cycle;
+
+        const vector<string>& stages = inst.m_stage_log;
+        // Looping through each stage and putting it in the column it belongs is
+        for (int j = 0; j < stages.size(); ++j) {
+                int col = startCycle + j - 1;
+                if (col < maxCycle) {
+                    spreadsheet[i][col] = stages[j];
+                }
+            }
+        }
+}
 
 
 // HELPER FUNCTIONS
