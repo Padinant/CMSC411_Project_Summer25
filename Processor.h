@@ -103,11 +103,11 @@ public:
   // decode a given instruction object and load the values of all delivarables (corresponds to the ID stage)
   // also check if we should stall (ie repeat this stage)
   // would interpret its dependencies, and other relevant details not already known
-  void instructionDecode(Instruction inst);
+  void instructionDecode(Instruction &inst);
 
   // finds the values of the dependencies for a given instruction (is helper to instructionDecode())
   // Precondition: IF stage has been called so we do know the names of the operands
-  void getOperandVals(Instruction x);
+  void getOperandVals(Instruction &x);
 
 
   // BRANCH PREDICTION RELATED FUNCTIONS

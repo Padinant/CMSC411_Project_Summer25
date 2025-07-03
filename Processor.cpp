@@ -310,7 +310,7 @@ void Processor::startProcessor(){
             // ADD CODE HERE LATER
             // for each instruction in the pipeline...
             for (int i = 0; i < m_pipeline.size(); i++){
-                Instruction currInst = m_pipeline[i];   // hopefully a shallow copy
+                Instruction currInst = m_pipeline[i];   // (hopefully)this should be a shallow copy
                 // check if stalling
                 // check if not breaking any rules/hazards for forwarding
                     // potentially update stall_all_the_way_down
@@ -322,11 +322,16 @@ void Processor::startProcessor(){
                 if (stall_all_the_way_down){
                     // set instruction to stall - note: we do not need to modify the forwarding queues in this version
                     currInst.pushToStageLog(STALL_NAME);
-                    // if previous (non-stall) instruction was ID, update the operator values again
-                    // todo: come back here
+                    // if previous (non-stall) stage was ID, update the operator values again
+                    string prevRelevantStage = currInst.getLatestNonStallStageLog();
+                    if (prevRelevantStage == "ID"){
+                        instructionDecode(currInst);
+                    }
+
+                    // todo: potentially add more stuff to this if needed
 
                 } else {
-                    // progress instruction by 1 stage (if possible)
+                    // progress instruction by 1 stage (if possible) - OR start to stall_all_the_way_down
                     // Figure out what the expected stage would be
                     // string expectedStage = currInst.getNextExpectedStageLog(getLatestStageLog());
                     string prevStage = currInst.getLatestStageLog();
@@ -471,10 +476,12 @@ Instruction Processor::instructionFetch(){
 
 // NEW (not yet implemented in Processor.cpp)
 // decode a given instruction object and load the values of all delivarables (corresponds to the ID stage)
-// also check if we should stall (ie repeat this stage)
+// What it doesn't do now: also check if we should stall (ie repeat this stage)
+// What it doesn't do: push "ID to stage log"
 // would interpret its dependencies, and other relevant details not already known
-void Processor::instructionDecode(Instruction inst){
-    //
+void Processor::instructionDecode(Instruction &inst){
+    // call getOperandVals to find operand values
+    getOperandVals(inst);
 }
 
 // NOTE: DUE TO REGISTER ISSUES, THIS IS POTENTIALLY INCOMPLETE
@@ -482,7 +489,7 @@ void Processor::instructionDecode(Instruction inst){
 // if s2 doesn't exist, save the value as -1
 // if something is an immediate, save the value as itself
 // Precondition: IF stage has been called so we do know the names of the operands
-void Processor::getOperandVals(Instruction x){
+void Processor::getOperandVals(Instruction &x){
     // find the register/memory values per operand
     string dest = x.getDest();
     string s1 = x.getS1();

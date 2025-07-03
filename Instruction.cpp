@@ -267,6 +267,32 @@ string Instruction::getLatestStageLog(){
     return m_stage_log.back();  // returns the last element of the vector
 }
 
+// Returns the most recently logged stage (that wasn't a STALL). If stage log is empty, return ""
+  string Instruction::getLatestNonStallStageLog(){
+    // if empty
+    if (m_stage_log.empty()){
+        return "";
+    }
+
+    // if latest WAS a STALL
+    if (m_stage_log.back() == STALL_NAME){
+        // find the latest none-stall command
+        string prevRelevantStage = "";
+        for (int i = m_stage_log.size() - 1; i >= 0; --i) {
+            if (m_stage_log[i] != STALL_NAME) {
+                prevRelevantStage = m_stage_log[i];
+                break;
+            }
+        }
+
+        return prevRelevantStage;
+    }
+
+    // if latest wasn't a STALL
+    return m_stage_log.back();  // returns the last element of the vector
+
+  }
+
 
 // Uses getLatestStageLog to predict what the next expected stage log should be
 // Precondition: IF stage has already been completed
@@ -275,11 +301,11 @@ string Instruction::getNextExpectedStageLog(string prevStage){
     if (prevStage == ""){   // unexpected
         return "";
     }
-    if (prevStage == "STALL"){     // STALL --> [depends]
+    if (prevStage == STALL_NAME){     // STALL --> [depends]
         // find the latest none-stall command
         string prevRelevantStage = "";
         for (int i = m_stage_log.size() - 1; i >= 0; --i) {
-            if (m_stage_log[i] != "stall") {
+            if (m_stage_log[i] != STALL_NAME) {
                 prevRelevantStage = m_stage_log[i];
                 break;
             }

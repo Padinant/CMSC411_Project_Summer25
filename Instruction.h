@@ -142,6 +142,9 @@ public:
   // Returns the most recently logged stage. If stage log is empty, return ""
   string getLatestStageLog();
 
+  // Returns the most recently logged stage (that wasn't a STALL). If stage log is empty, return ""
+  string getLatestNonStallStageLog();
+
   // Uses getLatestStageLog to predict what the next expected stage log should be
   // Precondition: IF stage has already been completed
   string getNextExpectedStageLog(string prevStage);
