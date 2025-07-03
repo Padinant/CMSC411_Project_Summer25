@@ -225,14 +225,16 @@ void Processor::startProcessor(){
         // Each Iteration is a cycle
         bool stall_all_the_way_down = false;    // when this is true, every instruction below stalls
 
-        // Clear m_availableNextCycle (vector used to avoid RAW hazards) for the new cycle
-        m_availableNextCycle.clear();
+        // Clear m_availableNextCycle vectors (used to avoid RAW hazards) for the new cycle
+        m_availableNextCycleRead.clear();
+        m_availableNextCycleWrite.clear();
 
         // TODO: deal with instructions already in m_pipeline
         if (not m_pipeline.empty()){
             // ADD CODE HERE LATER
             // for each instruction in the pipeline...
             for (int i = 0; i < m_pipeline.size(); i++){
+                Instruction currInst = m_pipeline[i];   // hopefully a shallow copy
                 // check if stalling
                 // check if not breaking any rules/hazards for forwarding
                     // potentially update stall_all_the_way_down
@@ -242,9 +244,18 @@ void Processor::startProcessor(){
                 // update pointer if we had a branch prediction or branch decision
 
                 if (stall_all_the_way_down){
-                    // set instruction to stall
+                    // set instruction to stall - note: we do not need to modify the forwarding queues in this version
+                    currInst.pushToStageLog(STALL_NAME);
                 } else {
                     // progress instruction by 1 stage (if possible)
+                    // Figure out what the expected stage would be
+                    // string expectedStage = currInst.getNextExpectedStageLog(getLatestStageLog());
+                    string prevStage = currInst.getLatestStageLog();
+                    if (prevStage == DEFAULT_PIPELINE_STAGES[0]){
+                        // IF stage - don't worry about dependencies
+                    } else if (prevStage == DEFAULT_PIPELINE_STAGES[4]){
+                        // WB stage - don't worry about dependencies - end the stage
+                    }
                 }
             }
         

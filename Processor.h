@@ -162,8 +162,10 @@ private:
   //                                     // if this is the same as the pipeline size, it probably means there isn't any alive instructions
 
   // forwarding related attributes
-  vector<string> m_heldUp;
-  vector<string> m_availableNextCycle;
+  vector<string> m_heldUpRead;
+  vector<string> m_availableNextCycleRead; // would be treated as nonexistant for forwarding between loads and stores (in case of WAR not RAW)
+  vector<string> m_heldUpWrite;
+  vector<string> m_availableNextCycleWrite; // would be treated as nonexistant for forwarding between loads and stores (in case of WAR not RAW)
 
 };
  
