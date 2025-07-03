@@ -130,13 +130,23 @@ public:
 
 
   // DISPLAY RELATED FUNCTIONS:
-  // TODO LATER
 
   //Export spreadsheet to file
-    // takes 2d array of strings
-    // using filename
+  // takes 2d array of strings
+  // using filename
   void exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols);
 
+  // Not in Processor.cpp yet
+  // Display/print main memory
+  void displayMemory();
+
+  // Not in Processor.cpp yet
+  // Display/print int registers
+  void displayRegistersInt();
+
+  // Not in Processor.cpp yet
+  // Display/print F registers
+  void displayRegistersF();
 
 
   // HELPER FUNCTIONS
