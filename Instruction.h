@@ -112,6 +112,7 @@ public:
   // setters for initial and final cycles
   int getInitialCycle();
   int getFinalCycle();
+  const vector<string>& getStageLog() const;
 
 
   // More complex pipeline-related functions

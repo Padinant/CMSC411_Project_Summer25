@@ -372,7 +372,7 @@ void Processor::convertPipline(){
         if (m_pipeline[i].getIsActive()) {
             end = m_clock;
         } else {
-            end = m_pipeline[i].m_stage_log.size() + m_pipeline[i].m_initial_cycle;
+            end = m_pipeline[i].getStageLog().size() + m_pipeline[i].getInitialCycle();
         }
 
         if (end > max_cycle) {
@@ -398,13 +398,13 @@ void Processor::convertPipline(){
         if (inst.getIsActive()) {
             endCycle = m_clock;
         } else { // If its inactive then it calculates the end based on how many stages were completed when started
-            endCycle = inst.m_stage_log.size() + inst.m_initial_cycle;
+            endCycle = inst.getStageLog().size() + inst.getInitialCycle();
         }
 
         // Using the initial cycle find the starting column for the instructions row
-        int start_cycle = inst.m_initial_cycle;
+        int start_cycle = inst.getInitialCycle();
 
-        const vector<string>& stages = inst.m_stage_log;
+        const vector<string>& stages = inst.getStageLog();
         // Looping through each stage and putting it in the column it belongs is
         for (int j = 0; j < stages.size(); ++j) {
                 int col = start_cycle + j - 1;

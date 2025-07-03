@@ -182,37 +182,39 @@ void Instruction::setS2(string s2){
 
 
 // functions (getters and setters) for pipeline-related attributes
-  void Instruction::deActivate(int currCycle){
+void Instruction::deActivate(int currCycle){
     // set m_isActive to false, and save m_final_cycle 
     m_isActive = false;
     m_final_cycle = currCycle - 1;
-  }
-  void Instruction::endInstruction(int currCycle){
+}
+void Instruction::endInstruction(int currCycle){
     // set m_hasEnded to true, and save m_final_cycle
     m_hasEnded = true;
     m_final_cycle = currCycle; 
-  }
+}
 
-  bool Instruction::getIsAlive(){
+bool Instruction::getIsAlive(){
     // return false if !m_isActive or m_hasEnded
     return (m_isActive and !m_hasEnded);
-  }
-  bool Instruction::getIsActive(){
+}
+bool Instruction::getIsActive(){
     return m_isActive;
-  }
-  bool Instruction::getHasEnded(){
+}
+bool Instruction::getHasEnded(){
     return m_hasEnded;
-  }
+}
 
 
-  // setters for initial and final cycles
-  int Instruction::getInitialCycle(){
+// setters for initial and final cycles
+int Instruction::getInitialCycle(){
     return m_initial_cycle;
-  }
-  int Instruction::getFinalCycle(){
+}
+int Instruction::getFinalCycle(){
     return m_final_cycle;
-  }
-
+}
+const vector<string>& Instruction::getStageLog() const {
+    return m_stage_log;
+}
 
 // More complex pipeline-related functions
 
