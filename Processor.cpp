@@ -204,6 +204,7 @@ void Processor::startProcessor(){
     /* How the processor works:
     - Precondition: load instructions (should be done before calling startProcessor)
     - start pipeline loop (main portion) - 1 iteration corresponds to 1 clock cycle:
+        - update forwarding related vectors for the new cycle
         - look at every instruction already in the pipeline and have them progress by 1 step
             - if any is stalling, everything after would also stall, and we'd skip the IF part    
             - otherwise, instruction fetch from the next line (if not empty line), and increment the m_instruction_pointer
@@ -223,6 +224,9 @@ void Processor::startProcessor(){
     while(pipeline_active){
         // Each Iteration is a cycle
         bool stall_all_the_way_down = false;    // when this is true, every instruction below stalls
+
+        // Clear m_availableNextCycle (vector used to avoid RAW hazards) for the new cycle
+        m_availableNextCycle.clear();
 
         // TODO: deal with instructions already in m_pipeline
         if (not m_pipeline.empty()){
