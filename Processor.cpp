@@ -215,9 +215,10 @@ int Processor::registerAddressToIndex(string register_address){
     string s1 = register_address.substr(0, 1);  // first character
     string s2 = register_address.substr(1);     // everything else
 
-    if (s1 != "F"){
+    if (s1 != "F" or s1 != "$"){
         return -1;
-    } else {
+    } else
+    {
         // assuming that if there is an F, the rest is a valid number --> the register index
         return stoi(s2);
     }
