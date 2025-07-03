@@ -161,6 +161,10 @@ private:
   int m_first_alive_instruction_ptr = 0; // points at the place in pipeline, with the first alive instruction to start on
   //                                     // if this is the same as the pipeline size, it probably means there isn't any alive instructions
 
+  // forwarding related attributes
+  vector<string> m_heldUp;
+  vector<string> m_availableNextCycle;
+
 };
  
 #endif
