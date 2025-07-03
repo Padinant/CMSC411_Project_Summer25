@@ -32,7 +32,16 @@ public:
         m_prediction = !m_prediction;
     }
 
+    bool getPrevWasTaken(){
+        return m_prevWasTaken;
+    }
+
+    void updatePrevWasTaken(bool prevWasTaken){
+        m_prevWasTaken = prevWasTaken;
+    }
+
 private:
     bool m_prediction;
+    bool m_prevWasTaken = true;
 
 };

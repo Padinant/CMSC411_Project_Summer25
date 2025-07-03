@@ -105,6 +105,9 @@ public:
   // What this function does: if predict taken: 1, if you predict not taken: 0, unexpected: -1
   int getBranchPrediction(BranchPredictor bp, Instruction cInst);
 
+  // Get the actual branch prediction result (1 for taken, 0 for not taken) based on m_s1, m_s2, m_dest, m_myType from the Instruction
+  int getBranchActual(BranchPredictor bp, Instruction cInst);
+
 
   // NEW
   // Converts pipline into 2D array
