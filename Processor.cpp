@@ -189,6 +189,20 @@ int Processor::memoryAddressToIndex(string memAddress){
         }
     }
 
+    // If it's just a num without preceding $ or ()
+    bool is_num = true;
+    for (char c: memAddress){
+        if(!isdigit(c)){
+            is_num = false;
+            break;
+        }
+    }
+    // If it's just a num without preceding $ or ()
+    if(is_num){
+        int index = atoi(memAddress.c_str());
+        return index % 19;
+    }
+
     // Something went wrong
     return -1;
 }

@@ -37,7 +37,7 @@ int main(){
 }
 
 void Tester::testLoadInstructions(const string& filename){
-    Processor proc(filename);
+    Processor proc;
     proc.loadInstructions(filename);
 
         // To disisplay the loaded instructions
@@ -82,7 +82,8 @@ void Tester::testExportSpreadsheet(){
 void Tester::testAddressToIndex(){
     Processor p;
     // Last four are error cases and should return -1
-    string testCases[] = {"$0", "$5", "$18", "$19", "$20", "0($0)", "4($1)", "16($18)", "100($19)","($2)", "( $3 )", "invalid", "", "$"};
+    string testCases[] = {"$0", "$5", "$18", "$19", "$20", "0($0)", "4($1)", "16($18)", "100($19)","($2)",
+        "1", "18", "100", "( $3 )", "invalid", "", "$"};
 
     cout << "Testing memoryAddressToIndex: " << endl;
     for (int i = 0; i < sizeof(testCases) / sizeof(testCases[0]); i++) {
