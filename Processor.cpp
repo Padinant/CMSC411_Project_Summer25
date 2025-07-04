@@ -807,6 +807,41 @@ void Processor::getOperandVals(Instruction &x){
     }
 }
 
+int Processor::getBranchPrediction(Instruction cInst) {
+    // This returns 1 for taken, 0 for not taken, or -1 for something wrong
+    int prediction = m_bp.getPrediction();
+    return prediction;
+}
+
+int Processor::getBranchActual(Instruction cInst) {
+    string type = cInst.getType();
+
+    // Something wrong
+    if (type != "BEQ" && type != "BNE" && type != "J") {
+        return -1;
+    }
+
+    // Jump is always taken
+    if (type == "J") {
+        return 1;
+    }
+
+    int s1 = cInst.getS1Val();
+    int s2 = cInst.getS2Val();
+
+    if (type == "BEQ") {
+        if(s1 == s2) return 1;
+        else return 0;
+    }
+
+    if (type == "BNE") {
+        if(s1 != s2) return 1;
+        else return 0;
+    }
+
+    // Something went wrong if it makes it here
+    return -1;
+}
 
 void Processor::convertPipline(){
     int num_instructions = m_pipeline.size();
