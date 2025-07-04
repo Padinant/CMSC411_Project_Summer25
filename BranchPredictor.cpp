@@ -9,8 +9,11 @@ using namespace std;
 class BranchPredictor{
 public:
     // // Constructor and Destructor
-    BranchPredictor();
-    ~BranchPredictor();
+    BranchPredictor(){
+        m_prevWasTaken = true;
+        m_prediction = true;
+    }
+    ~BranchPredictor(){}
     // // get or update prediction
     // bool getPrediction();
     // void updatePrediction();
