@@ -412,15 +412,21 @@ void Processor::startProcessor(){
                         else if (prevRelevantStage == "ID"){
                             instructionDecode(currInst);
 
-                            // Actually, don't update any of the vectors during STALLs
-                            // // update forwarding vectors (note: since we are stalling, don't modify m_heldUpRead and m_heldUpWrite)
-                            // // just refill the forwarding vectors that get cleared at every cycle?
-                            // m_availableNextCycleRead
+                            // // TODO: update STALLS based on type/category
+                            // // // update forwarding vectors (note: since we are stalling, don't modify m_heldUpRead and m_heldUpWrite)
+                            // // // just refill the forwarding vectors that get cleared at every cycle?
+                            // if (currInst.getType() == "BNE" or currInst.getType() == "BEQ"){
+                            //     m_availableNextCycleRead.push_back(s1);
+                            // } else {
+                            //     // TODO COME BACK AFTER FINISHING ID
+                            // }
+                            
+                            
 
                         } 
                         // Other stages: EX, MEM, WB - also none
                         else {
-                            // nothing here         // todo: potentially add more stuff to this if needed
+                            // nothing here         // todo: potentially add more stuff to this later if needed
                         }
                     } 
                     
@@ -443,19 +449,25 @@ void Processor::startProcessor(){
                             // update the forwarding vectors based on the instruction type and operators
                             string type = currInst.getType();
                             string category = currInst.getCategory();
-                            // string dest = currInst.getDest();
-                            // string s1 = currInst.getS1();
-                            // string s2 = currInst.getS2();
+                            
+                            string dest = currInst.getDest();
+                            string s1 = currInst.getS1();
+                            string s2 = currInst.getS2();
 
-                            if (type == "J"){
-                                // skip for now - s1 is a label, s2 is nonexistant
-                            } else if (category == INSTRUCTION_CATEGORIES[2]) {
-                                // rest of "CONTROL" category - ie: BEQ or BNE
-                                // dest 
-
-                            } else {
-                                // For most other instructions:
-                            }
+                            // if (type == "J"){
+                            //     // skip for now - dest is a label, s1 and s2 are nonexistant
+                            //     // no need for any forwarding
+                            // } else if (category == INSTRUCTION_CATEGORIES[2]) {
+                            //     // rest of "CONTROL" category - ie: BEQ or BNE
+                            //     // dest and s1 as normal, s2 is a label
+                            //     // update forwarding for s1 only
+                            //     // m_heldUpRead.push_back(s1);  // NOPE
+                            //     m_availableNextCycleRead.push_back(s1);
+                            //     m_heldUpWrite.push_back(dest);
+                                
+                            // } else {
+                            //     // For most other instructions: memory and alu
+                            // }
                         }
 
 
