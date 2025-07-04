@@ -1006,7 +1006,32 @@ void Processor::exportSpreadsheet(string filename, string** spreadsheet, int row
     outfile.close();
 }
 
+// Display/print main memory
+void Processor::displayMemory(){
+    cout << "Memory Contents from indices 0-18:" << endl;
+    for (int i = 0; i < 19; ++i) {
+        cout << "m_memory[" << i << "] = " << m_memory[i] << endl;
+    }
+    cout << endl;
+}
 
+ // Display/print int registers
+void Processor::displayRegistersInt(){
+    cout << "Integer Registers from $0 - $31:" << endl;
+    for (int i = 0; i < 32; ++i) {
+        cout << "$" << i << " = " << m_registersInt[i] << endl;
+    }
+    cout << endl;
+}
+
+// Display/print F registers
+void Processor::displayRegistersF(){
+    cout << "Float Registers from F0-F31:" << endl;
+    for (int i = 0; i < 32; ++i) {
+        cout << "F" << i << " = " << m_registersF[i] << endl;
+    }
+    cout << endl;
+}
 
 string Processor::trimExtraWhiteSpace(string s1){
     // trims any extra whitespace from before and after from the line

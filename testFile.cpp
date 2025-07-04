@@ -33,6 +33,10 @@ int main(){
     test.testStore();
     test.testLoad();
     test.testConvertPipline();
+    Processor p;
+    p.displayMemory();
+    p.displayRegistersF();
+    p.displayRegistersInt();
     return 0;
 }
 

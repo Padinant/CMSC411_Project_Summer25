@@ -153,15 +153,12 @@ public:
   // using filename
   void exportSpreadsheet(string filename, string** spreadsheet, int rows, int cols);
 
-  // Not in Processor.cpp yet
   // Display/print main memory
   void displayMemory();
 
-  // Not in Processor.cpp yet
   // Display/print int registers
   void displayRegistersInt();
 
-  // Not in Processor.cpp yet
   // Display/print F registers
   void displayRegistersF();
 
