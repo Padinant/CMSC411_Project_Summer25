@@ -131,6 +131,14 @@ public:
   // Get the actual branch prediction result (1 for taken, 0 for not taken) based on m_s1, m_s2, m_dest, m_myType from the Instruction
   int getBranchActual(Instruction cInst);
 
+  // given a labelName, return the index in which that label can be access on m_instructions
+  // note: if labelName is valid, it should be in the range of (0, m_instructions_len)
+  // if you can't find labelName, return -1
+  // Example: m_instructions = ["...", "Label1: ...", "...", "...", "Label2: ..."]
+  // findLabelIndex("Label1") --> 1
+  // findLabelIndex("Label2") --> 4
+  int findLabelIndex(string labelName);
+
 
   // NEW
   // Converts pipline into 2D array
