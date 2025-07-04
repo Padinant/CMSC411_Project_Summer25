@@ -381,6 +381,8 @@ void Processor::startProcessor(){
         // TODO: deal with instructions already in m_pipeline
         if (not m_pipeline.empty()){
             // ADD CODE HERE LATER
+            bool deactivateRestOfBranch = false;    // useful boolean for branch selection
+
             // for each instruction in the pipeline...
             for (int i = 0; i < m_pipeline.size(); i++){
                 Instruction currInst = m_pipeline[i];   // (hopefully)this should be a shallow copy
@@ -395,6 +397,15 @@ void Processor::startProcessor(){
 
                 // TODO check for inactivity (add logic for that and check it before the stall stage)
                 // for the actual branch selection prediction/determination, that would happen later on
+                // todo Section Description: add a section + boolean that if a previous branch selection had been wrong, deactivate everything until loop's end
+                if (deactivateRestOfBranch){
+                    currInst.deActivate(m_clock);
+                    
+                    // also update all the vectors so it doesn't cause issues
+                    // not sure if it would help with keeping the vectors straight, if we move this section to slightly later??? thought prob not
+                    // vectors // TODO
+                }
+
 
                 if (currInst.getIsAlive()){ // skip over anything that is inactive or dead
                     // STALL - we are stalling
@@ -412,16 +423,54 @@ void Processor::startProcessor(){
                         else if (prevRelevantStage == "ID"){
                             instructionDecode(currInst);
 
-                            // // TODO: update STALLS based on type/category
-                            // // // update forwarding vectors (note: since we are stalling, don't modify m_heldUpRead and m_heldUpWrite)
-                            // // // just refill the forwarding vectors that get cleared at every cycle?
-                            // if (currInst.getType() == "BNE" or currInst.getType() == "BEQ"){
-                            //     m_availableNextCycleRead.push_back(s1);
-                            // } else {
-                            //     // TODO COME BACK AFTER FINISHING ID
-                            // }
+                            // Section Description: update the forwarding vectors based on the instruction type and operators
+                            // Note: this section is based on the one used during the ID stage, but slightly different
+                            // update forwarding vectors (note: since we are stalling, don't modify m_heldUpRead and m_heldUpWrite, ONLY availableNextCycle)
+                            // Basically, we are just refilling the forwarding vectors that get automatically cleared at every cycle
+                            string type = currInst.getType();
+                            string category = currInst.getCategory();
                             
-                            
+                            string dest = currInst.getDest();
+                            string s1 = currInst.getS1();
+                            string s2 = currInst.getS2();
+
+                            // CONTROL
+                            if (type == "J"){
+                                // skip for now - dest is a label, s1 and s2 are nonexistant
+                                // no need for any forwarding
+                            } else if (category == INSTRUCTION_CATEGORIES[2]) {
+                                // rest of "CONTROL" category - ie: BEQ or BNE
+                                // dest and s1 ARE BOTH READ FROM (not written to), s2 is a label
+                                m_availableNextCycleRead.push_back(s1);
+                                m_availableNextCycleRead.push_back(dest);  
+                            } 
+                            // ALU
+                            else if (type == "ADDI"){
+                                // add immediate - dest and s1 are normal registers, s2 is a immediate
+                                m_availableNextCycleRead.push_back(s1);
+                            } else if (category == INSTRUCTION_CATEGORIES[0]){
+                                // rest of the ALU categories - dest, s1, s2 are normal registers
+                                // update forwarding for all three
+                                m_availableNextCycleRead.push_back(s1);
+                                m_availableNextCycleRead.push_back(s2);
+                            }
+                            // MEMORY
+                            // L.D Fa, Offset(addr)
+                            // S.D Fa, Offset(addr)
+                            // LI $d, IMM64 -Integer Immediate Load
+                            // LW $d, Offset(addr)
+                            // SW $s, Offset(addr)
+                            // A memory instruction has dest and s1 only
+                            // for LI, only dest would go to heldUp
+                            // for loads, dest and (if applicable) s1 would go to heldUp
+                            // for stores, dest would go to heldUp, s1 would go to availableNextCycle
+                            else {
+                                // MEMORY
+                                // we don't need to do anything, unless it's a store instruction
+                                if(type == "S.D" or type == "SW"){       // every other load
+                                    m_availableNextCycleRead.push_back(s1);
+                                }
+                            }
 
                         } 
                         // Other stages: EX, MEM, WB - also none
@@ -441,10 +490,16 @@ void Processor::startProcessor(){
                             // call ID stage (load all operands)
                             instructionDecode(currInst);
 
+
+                            // IGNORE:
+                            // todo: check whether everything is available or if we should stall
+                            // update forwarding (register mem-specific forwarding) (only if MEMORY instruction, and reading from register memory which was written to on this cycle)
+
+
+                            // Note: only do this section if we can successfully continue
                             // update forwarding (heldUp R + W)
                             // update forwarding (availableNextCycle R)
-                            // update forwarding (register mem-specific forwarding)
-
+                            // update forwarding (register mem-specific forwarding) - (Note: This will now be done at the beginning of EX and end of MEM)
 
                             // update the forwarding vectors based on the instruction type and operators
                             string type = currInst.getType();
@@ -454,66 +509,87 @@ void Processor::startProcessor(){
                             string s1 = currInst.getS1();
                             string s2 = currInst.getS2();
 
-                            // if (type == "J"){
-                            //     // skip for now - dest is a label, s1 and s2 are nonexistant
-                            //     // no need for any forwarding
-                            // } else if (category == INSTRUCTION_CATEGORIES[2]) {
-                            //     // rest of "CONTROL" category - ie: BEQ or BNE
-                            //     // dest and s1 as normal, s2 is a label
-                            //     // update forwarding for s1 only
-                            //     // m_heldUpRead.push_back(s1);  // NOPE
-                            //     m_availableNextCycleRead.push_back(s1);
-                            //     m_heldUpWrite.push_back(dest);
-                                
-                            // } else {
-                            //     // For most other instructions: memory and alu
-                            // }
-                        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        // NOTE: these are old code remnants, I will get rid of them
-                        // progress instruction by 1 stage (if possible) - OR start to stall_all_the_way_down
-                        // Figure out what the expected stage would be
-                        // string expectedStage = currInst.getNextExpectedStageLog(getLatestStageLog());
-                        //string prevStage = currInst.getLatestStageLog();
-                        if (prevStage == DEFAULT_PIPELINE_STAGES[0]){
-                            // IF stage - don't worry about dependencies being met at this stage
-                            // instead call ID stage 
-                            instructionDecode(currInst);
-                            // and update the forwarding vectors based on operators
-                            string type = currInst.getType();
+                            // CONTROL
                             if (type == "J"){
-                                // skip for now - s1 is a label
+                                // skip for now - dest is a label, s1 and s2 are nonexistant
+                                // no need for any forwarding
+                            } else if (category == INSTRUCTION_CATEGORIES[2]) {
+                                // rest of "CONTROL" category - ie: BEQ or BNE
+                                // dest and s1 ARE BOTH READ FROM (not written to), s2 is a label
+                                // update forwarding for dest and s1 only
+                                // m_heldUpRead.push_back(s1);  // NOPE
+                                m_availableNextCycleRead.push_back(s1);
+                                m_availableNextCycleRead.push_back(dest);
                             } 
-                            // else if (type == ...)
-                            
-                            // // destination
-                            // m_heldUpRead.push_back
-                            // m_heldUpWrite.push_back(currInst.getDestVal())
-                            
-                        } else if (prevStage == DEFAULT_PIPELINE_STAGES[4]){
-                            // WB stage - don't worry about dependencies being met at this stage
-                            // 
-                            // end the instruction
+                            // ALU
+                            else if (type == "ADDI"){
+                                // add immediate - dest and s1 are normal registers, s2 is a immediate
+                                // update forwarding for dest and s1 only
+                                m_availableNextCycleRead.push_back(s1);
+                                m_heldUpWrite.push_back(dest);
+                            } else if (category == INSTRUCTION_CATEGORIES[0]){
+                                // rest of the ALU categories - dest, s1, s2 are normal registers
+                                // update forwarding for all three
+                                m_availableNextCycleRead.push_back(s1);
+                                m_availableNextCycleRead.push_back(s2);
+                                m_heldUpWrite.push_back(dest);
+                            }
+                            // MEMORY
+                            // L.D Fa, Offset(addr)
+                            // S.D Fa, Offset(addr)
+                            // LI $d, IMM64 -Integer Immediate Load
+                            // LW $d, Offset(addr)
+                            // SW $s, Offset(addr)
+                            // A memory instruction has dest and s1 only
+                            // for LI, only dest would go to heldUp
+                            // for loads, dest and (if applicable) s1 would go to heldUp
+                            // for stores, dest would go to heldUp, s1 would go to availableNextCycle
+                            else {
+                                // MEMORY
+                                if (type == "LI"){      // Load Immediate
+                                    m_heldUpWrite.push_back(dest);
+                                } else if(type == "L.D" or type == "LW"){       // every other load
+                                    m_heldUpRead.push_back(s1);
+                                    m_heldUpWrite.push_back(dest);
+                                } else { // stores
+                                    m_availableNextCycleRead.push_back(s1);
+                                    m_heldUpWrite.push_back(dest);
+                                }
+                            }
+                        } else if (expectedStage == DEFAULT_PIPELINE_STAGES[2] or expectedStage == DOUBLE_ADD_EXECUTE_PREFIX 
+                            or expectedStage == DOUBLE_MULT_EXECUTE_PREFIX or expectedStage == DOUBLE_DIV_EXECUTE_PREFIX){
+                            // It's the FIRST execute stage! A lot to break down
 
-                            // and update the forwarding vectors based on operators
+                            // Things to deal with
+                            // CONTROL EXECUTE - branch determination + ending the instruction + potentially deactivating a bunch more (by breaking the loop this round)
+                            // 
                         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        // NOTE: these are old code remnants, I will get rid of them                            
+                        // } else if (prevStage == DEFAULT_PIPELINE_STAGES[4]){
+                        //     // WB stage - don't worry about dependencies being met at this stage
+                        //     // 
+                        //     // end the instruction
+
+                        //     // and update the forwarding vectors based on operators
+                        // }
                 }
 
 
@@ -586,6 +662,9 @@ void Processor::startProcessor(){
         
         
         }
+
+        bool deactivateRestOfBranch = false;    // reset this boolean for branch selection so it is false again
+
 
         // fetch the next instruction if we are not stalling AND there are more instructions left to fetch
         if (!stall_all_the_way_down and (m_instruction_pointer >= m_instructions_len)){
