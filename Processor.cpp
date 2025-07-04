@@ -422,15 +422,19 @@ void Processor::startProcessor(){
 
                             // update the forwarding vectors based on the instruction type and operators
                             string type = currInst.getType();
+                            string category = currInst.getCategory();
                             // string dest = currInst.getDest();
                             // string s1 = currInst.getS1();
                             // string s2 = currInst.getS2();
 
                             if (type == "J"){
                                 // skip for now - s1 is a label, s2 is nonexistant
-                            } else {
-                                // For most pther instructions:
+                            } else if (category == INSTRUCTION_CATEGORIES[2]) {
+                                // rest of "CONTROL" category - ie: BEQ or BNE
+                                // dest 
 
+                            } else {
+                                // For most other instructions:
                             }
                         }
 
@@ -608,7 +612,17 @@ Instruction Processor::instructionFetch(){
     // }
     // part 1
     string plaintext = m_instructions[m_instruction_pointer];
-    // plaintext = ...  // remove label from beginning if any // todo
+
+    // part 1.5 remove label from beginning if any
+    char labelSignifier = ':';
+    int posLabelSignifier = plaintext.find(labelSignifier); // position of the ':' character
+    if (posLabelSignifier != string::npos) {
+        // There IS a label --> remove it
+        // string labelName = plaintext.substr(0, posLabelSignifier); // doesn't include ':' // code is here for reference
+        string theRest = plaintext.substr(posLabelSignifier + 1);
+        plaintext = trimExtraWhiteSpace(theRest); // update the plaintext
+    }
+
     
     // part 2 - creating an instruction object
     Instruction myInst(plaintext, m_clock);
@@ -618,6 +632,8 @@ Instruction Processor::instructionFetch(){
     // "ADD.D F2,F0,F1"
     // "S.D F2,0($2)
     // "LI $7,0"
+    // "J Loop1"
+    // "BNE $1,$2,Loop1"
 
     // find first word until space --> type
     int space_pos = plaintext.find(' ');  // position of the first space
@@ -625,6 +641,19 @@ Instruction Processor::instructionFetch(){
     string text2 = plaintext.substr(space_pos + 1); // The rest of the string (after the space)
     
     myInst.setType(text1);
+
+    // NEW SECTION: WE'LL DO THE CODE SEPARATELY FOR A J INSTRUCTION (only has dest)
+    if (text1 == "J"){
+        // s1 and s2 are ""
+        text2 = trimExtraWhiteSpace(text2);
+
+        myInst.setDest(text2);
+        myInst.setS1("");
+        myInst.setS2("");
+        
+        return myInst; // early return
+    }
+
     
     // split string by commas: dest, source1, source2(optional)
     string text_a, text_b, text_c;
@@ -663,9 +692,7 @@ Instruction Processor::instructionFetch(){
 
     // // part 4
     // m_pipeline.push_back(myInst); // Note: this should now be done in startProcessor
-    return myInst;  // in later version, don't return myInst, instead just add it to the pipeline
-
-
+    return myInst;  
 }
 
 // NEW (not yet implemented in Processor.cpp)
