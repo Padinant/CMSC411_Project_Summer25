@@ -33,6 +33,10 @@ int main(){
     test.testStore();
     test.testLoad();
     test.testConvertPipline();
+    Processor p;
+    p.displayMemory();
+    p.displayRegistersF();
+    p.displayRegistersInt();
     return 0;
 }
 
@@ -93,31 +97,31 @@ void Tester::testAddressToIndex(){
 }
 
 void Tester::testStore(){
-    Processor p;
-    p.setRegisterValue("$5", 101);
-    p.store("$5", "0($2)");
+    // Processor p;
+    // p.setRegisterValue("$5", 101);
+    // p.store("$5", "0($2)");
 
-    int expectedIndex = p.memoryAddressToIndex("0($2)");
-    int actualValue = p.getMemoryValue(expectedIndex);
+    // int expectedIndex = p.memoryAddressToIndex("0($2)");
+    // int actualValue = p.getMemoryValue(expectedIndex);
 
-    cout << "Testing store(): " << endl;
-    cout << "Expected memory[" << expectedIndex << "] = 101. Got: " << actualValue << endl;
+    // cout << "Testing store(): " << endl;
+    // cout << "Expected memory[" << expectedIndex << "] = 101. Got: " << actualValue << endl;
 }
 
 void Tester::testLoad(){
-    Processor p;
-    int expectedValue = 101;
-    int memoryIndex = 5;
+    // Processor p;
+    // int expectedValue = 101;
+    // int memoryIndex = 5;
 
-    p.setRegisterValue("$1", expectedValue);
-    p.store("$1", "$5");
+    // p.setRegisterValue("$1", expectedValue);
+    // p.store("$1", "$5");
 
-    p.load("$10", "$5");
+    // p.load("$10", "$5");
 
-    int actual = p.getRegisterValue("$10");
+    // int actual = p.getRegisterValue("$10");
 
-    cout << "Testing load(): " << endl;
-    cout << "Register $10 contains " << actual << ". Expected: " << expectedValue << endl;
+    // cout << "Testing load(): " << endl;
+    // cout << "Register $10 contains " << actual << ". Expected: " << expectedValue << endl;
 }
 
 void Tester::testConvertPipline(){

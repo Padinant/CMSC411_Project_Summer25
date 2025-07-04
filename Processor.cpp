@@ -128,7 +128,7 @@ void Processor::load(string reg_address, string mem_address){
     int mem_index = memoryAddressToIndex(mem_address);
 
     // Invalid mem index
-    if(mem_index < 0 || memAddress >=19){
+    if(mem_index < 0 || mem_index >= 19){
         return;
     }
 
@@ -188,6 +188,8 @@ void Processor::store(string reg_address, string mem_address){
 }
 
 int Processor::memoryAddressToIndex(string memAddress){
+    if(memAddress.empty()) return -1;
+
     int openParen = -1;
     int closeParen = -1;
     
@@ -197,7 +199,7 @@ int Processor::memoryAddressToIndex(string memAddress){
         return reg_index % 19;
     }
 
-    // If the address is in in format 0($1) or offset($reg) or something similar
+    // Checking for parantheses
     for (int i = 0; i < memAddress.length(); i++) {
         if (memAddress[i] == '(') { // Looking for the opening parantheses
             openParen = i;
@@ -209,13 +211,31 @@ int Processor::memoryAddressToIndex(string memAddress){
     // Checking if there are opening and closing parantheses that are not empty
     if (openParen != -1 && closeParen != -1 && closeParen > openParen + 1) {
         // Taking out contents from the parantheses
+        string offsetStr = memAddress.substr(0, openParen);
         string reg = memAddress.substr(openParen + 1, closeParen - openParen - 1);
-        // Making sure the reg starts with $ and followed by somehting else
-        if (reg.length() > 1 && reg[0] == '$') {
-            int reg_index = atoi(reg.substr(1).c_str());
-            // Returning the reg_index converted to a mem index from 0-18
-            return reg_index % 19;
+
+        int offset = 0;
+        try {
+            offset = stoi(offsetStr);
+        } catch (...) {
+            // Some invalid offset
+            return -1;
         }
+
+        if (!reg.empty()) {
+            char prefix = reg[0];
+            int index = atoi(reg.substr(1).c_str());
+
+            if (prefix == '$' && index >= 0 && index < 32) {
+                return (offset + m_registersInt[index]) % 19;
+            } else if (prefix == 'F' && index >= 0 && index < 32) {
+                return (offset + m_registersF[index]) % 19;
+            } else if (isdigit(prefix)) {
+                // Something like "10(5)" will treat 5 as literal number
+                int regVal = atoi(reg.c_str());
+                return (offset + regVal) % 19;
+            }
+        } 
     }
 
     // If it's just a num without preceding $ or ()
@@ -248,11 +268,11 @@ int Processor::registerAddressToIndex(string register_address){
     char s1 = register_address[0]; // first character
     string s2 = register_address.substr(1); // everything else
 
-    if (s1 == "F" || s1 == "$"){
+    if (s1 == 'F' || s1 == '$'){
         // assuming that if there is an F, the rest is a valid number --> the register index
-        return atoi(s1.c_str());
+        return atoi(s2.c_str());
     }
-    
+
     return -1;
 }
 
@@ -471,7 +491,7 @@ void Processor::startProcessor(){
                         // progress instruction by 1 stage (if possible) - OR start to stall_all_the_way_down
                         // Figure out what the expected stage would be
                         // string expectedStage = currInst.getNextExpectedStageLog(getLatestStageLog());
-                        string prevStage = currInst.getLatestStageLog();
+                        //string prevStage = currInst.getLatestStageLog();
                         if (prevStage == DEFAULT_PIPELINE_STAGES[0]){
                             // IF stage - don't worry about dependencies being met at this stage
                             // instead call ID stage 
@@ -998,7 +1018,32 @@ void Processor::exportSpreadsheet(string filename, string** spreadsheet, int row
     outfile.close();
 }
 
+// Display/print main memory
+void Processor::displayMemory(){
+    cout << "Memory Contents from indices 0-18:" << endl;
+    for (int i = 0; i < 19; ++i) {
+        cout << "m_memory[" << i << "] = " << m_memory[i] << endl;
+    }
+    cout << endl;
+}
 
+ // Display/print int registers
+void Processor::displayRegistersInt(){
+    cout << "Integer Registers from $0 - $31:" << endl;
+    for (int i = 0; i < 32; ++i) {
+        cout << "$" << i << " = " << m_registersInt[i] << endl;
+    }
+    cout << endl;
+}
+
+// Display/print F registers
+void Processor::displayRegistersF(){
+    cout << "Float Registers from F0-F31:" << endl;
+    for (int i = 0; i < 32; ++i) {
+        cout << "F" << i << " = " << m_registersF[i] << endl;
+    }
+    cout << endl;
+}
 
 string Processor::trimExtraWhiteSpace(string s1){
     // trims any extra whitespace from before and after from the line
