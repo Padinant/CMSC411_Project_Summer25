@@ -188,6 +188,8 @@ void Processor::store(string reg_address, string mem_address){
 }
 
 int Processor::memoryAddressToIndex(string memAddress){
+    if(memAddress.empty()) return -1;
+
     int openParen = -1;
     int closeParen = -1;
     
@@ -197,7 +199,7 @@ int Processor::memoryAddressToIndex(string memAddress){
         return reg_index % 19;
     }
 
-    // If the address is in in format 0($1) or offset($reg) or something similar
+    // Checking for parantheses
     for (int i = 0; i < memAddress.length(); i++) {
         if (memAddress[i] == '(') { // Looking for the opening parantheses
             openParen = i;
@@ -209,13 +211,31 @@ int Processor::memoryAddressToIndex(string memAddress){
     // Checking if there are opening and closing parantheses that are not empty
     if (openParen != -1 && closeParen != -1 && closeParen > openParen + 1) {
         // Taking out contents from the parantheses
+        string offsetStr = memAddress.substr(0, openParen);
         string reg = memAddress.substr(openParen + 1, closeParen - openParen - 1);
-        // Making sure the reg starts with $ and followed by somehting else
-        if (reg.length() > 1 && reg[0] == '$') {
-            int reg_index = atoi(reg.substr(1).c_str());
-            // Returning the reg_index converted to a mem index from 0-18
-            return reg_index % 19;
+
+        int offset = 0;
+        try {
+            offset = stoi(offsetStr);
+        } catch (...) {
+            // Some invalid offset
+            return -1;
         }
+
+        if (!reg.empty()) {
+            char prefix = reg[0];
+            int index = atoi(reg.substr(1).c_str());
+
+            if (prefix == '$' && index >= 0 && index < 32) {
+                return (offset + m_registersInt[index]) % 19;
+            } else if (prefix == 'F' && index >= 0 && index < 32) {
+                return (offset + m_registersF[index]) % 19;
+            } else if (isdigit(prefix)) {
+                // Something like "10(5)" will treat 5 as literal number
+                int regVal = atoi(reg.c_str());
+                return (offset + regVal) % 19;
+            }
+        } 
     }
 
     // If it's just a num without preceding $ or ()
