@@ -189,6 +189,9 @@ private:
   int m_registersInt[32] = {0}; // represents the values stored in registers $0-$31. All are initialized to 0.
   int m_registersF[32] = {0}; // represents the values stored in registers F0-F31. All are initialized to 0.
   
+  // branch predictor
+  BranchPredictor m_bp;
+
   // logistics attributes about pipelining
   vector<Instruction> m_pipeline; // This vector represents all the instructions within the pipeline, in order of being fetched
   int m_clock = 0; // corresponds to the current cycle within the entire pipeline (pipeline starts at clock cycle 1)
