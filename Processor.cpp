@@ -123,42 +123,69 @@ void Processor::loadInstructions(string filename){
 }
 
 // note: commented these for now, as they are out of date and they cause errors (we are no longer using m_registers)
-// void Processor::load(string reg_address, string mem_address){
-//     // To convert mem_address to an actual index
-//     int mem_index = memoryAddressToIndex(mem_address);
+void Processor::load(string reg_address, string mem_address){
+    // To convert mem_address to an actual index
+    int mem_index = memoryAddressToIndex(mem_address);
 
-//     // Extracting the register index
-//     int reg_index = atoi(reg_address.substr(1).c_str());
+    // Invalid mem index
+    if(mem_index < 0 || memAddress >=19){
+        return;
+    }
 
-//     // Make sure the reg_index is valid between 0-32
-//     if (reg_index < 0 || reg_index >= 32) {
-//         cout << "Invalid register index: " << reg_index << endl;
-//         return;
-//     }
-//     // Load value from memory into register
-//     m_registers[reg_index] = m_memory[mem_index];
+    // Extracting the register index
+    int reg_index = registerAddressToIndex(reg_address);
 
-// }
+    // Make sure the reg_index is valid between 0-32
+    if (reg_index < 0 || reg_index >= 32) {
+        return;
+    }
 
-// void Processor::store(string reg_address, string mem_address){
-//     // Extracting the register index
-//     int reg_index = atoi(reg_address.substr(1).c_str());
+    if(reg_address[0] == '$'){
+        m_registersInt[reg_index] = m_memory[mem_index];
+    }
+    else if(reg_address[0] == 'F'){
+        m_registersF[reg_index] = m_memory[mem_index];
+    }
+    else{
+        // Invalid prefix for register
+        return;
+    }
+}
 
-//     // Getting the value stored in the the register
-//     int value = m_registers[reg_index];
+void Processor::store(string reg_address, string mem_address){
+    // Extracting the register index
+    int reg_index = registerAddressToIndex(reg_address);
 
-//     // To convert it to an actual index
-//     int mem_index = memoryAddressToIndex(mem_address);
+    // Invalid index
+    if(reg_index < 0 || reg_index >= 32){
+        return;
+    }
 
-//     // Make sure the index returned was valid and not -1 in case of an error
-//     if (mem_index < 0 || mem_index >= 19) {
-//         cout << "Invalid memory index returned by memoryAddressToIndex(): " << mem_index << endl;
-//         return;
-//     }
+    // Getting the value stored in the the register
+    int value = 0;
+    if(reg_address[0] == '$'){
+        value = m_registersInt[reg_index];
+    }
+    else if( reg_address[0] == 'F'){
+        value = m_registersF[reg_index];
+    }
+    else{
+        //Invalid
+        return;
+    }
 
-//     // To store the value into memory
-//     m_memory[mem_index] = value;
-// }
+    // To convert it to an actual index
+    int mem_index = memoryAddressToIndex(mem_address);
+
+    // Make sure the index returned was valid and not -1 in case of an error
+    if (mem_index < 0 || mem_index >= 19) {
+        cout << "Invalid memory index returned by memoryAddressToIndex(): " << mem_index << endl;
+        return;
+    }
+
+    // To store the value into memory
+    m_memory[mem_index] = value;
+}
 
 int Processor::memoryAddressToIndex(string memAddress){
     int openParen = -1;
@@ -213,17 +240,20 @@ int Processor::memoryAddressToIndex(string memAddress){
 // Valid Example: register_address = "F24" ---> 24
 // Invalid Example: register_address = "5" ---> -1
 int Processor::registerAddressToIndex(string register_address){
-    // if the first letter isn't an F, return -1
-    string s1 = register_address.substr(0, 1);  // first character
-    string s2 = register_address.substr(1);     // everything else
+    // CHeck to make sure not empty
+    if(register_address.empty()) return -1;
 
-    if (s1 != "F" or s1 != "$"){
-        return -1;
-    } else
-    {
+
+    // if the first letter isn't an F, return -1
+    char s1 = register_address[0]; // first character
+    string s2 = register_address.substr(1); // everything else
+
+    if (s1 == "F" || s1 == "$"){
         // assuming that if there is an F, the rest is a valid number --> the register index
-        return stoi(s2);
+        return atoi(s1.c_str());
     }
+    
+    return -1;
 }
 
 
