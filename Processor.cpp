@@ -932,6 +932,26 @@ int Processor::getBranchActual(Instruction cInst) {
     return -1;
 }
 
+int Processor::findLabelIndex(string labelName){
+    if(labelName.empty()) return -1;
+    
+    // Decided to add a : at the end to match the format of "Label:" since it wasn't working otherwise
+    string targetLabel = labelName + ":";
+
+    // Loop through all instructions to search for label
+    for (int i = 0; i < m_instructions_len; ++i) {
+        string trimmed = trimExtraWhiteSpace(m_instructions[i]);
+
+        // Check if the instruction starts with the label followed by :
+        if (trimmed.find(targetLabel) == 0) {
+            return i;
+        }
+    }
+    // Something wrong
+    return -1;
+
+}
+
 void Processor::convertPipline(){
     int num_instructions = m_pipeline.size();
 
