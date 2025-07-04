@@ -380,16 +380,28 @@ void Processor::startProcessor(){
                         string expectedStage = currInst.getNextExpectedStageLog(prevStage);
 
                         // ID - load operands, update forwarding(most cases), update mem-specific forwarding
-                        if (expectedStage == DEFAULT_PIPELINE_STAGES[1]){
-                            // check forwarding
+                        if (expectedStage == DEFAULT_PIPELINE_STAGES[1]){                        
                             
-                            
-                            // call ID stage 
+                            // call ID stage (load all operands)
                             instructionDecode(currInst);
 
                             // update forwarding (heldUp R + W)
                             // update forwarding (availableNextCycle R)
                             // update forwarding (register mem-specific forwarding)
+
+
+                            // update the forwarding vectors based on the instruction type and operators
+                            string type = currInst.getType();
+                            // string dest = currInst.getDest();
+                            // string s1 = currInst.getS1();
+                            // string s2 = currInst.getS2();
+
+                            if (type == "J"){
+                                // skip for now - s1 is a label, s2 is nonexistant
+                            } else {
+                                // For most pther instructions:
+
+                            }
                         }
 
 
