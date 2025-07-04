@@ -386,3 +386,46 @@ string Instruction::getNextExpectedStageLog(string prevStage){
     // anything else unexpected
     return "";
 }
+
+
+// Getters and Setters for attributes relating to Branch Prediction and CONTROL category instructions
+// IMPORTANT NOTE: branchVarName has to be 1 of ["m_ptr_to_taken", "m_ptr_to_not_taken", "m_predicted_taken", "m_actual_taken"]
+// 1=yes, 0=no, -1=unexpected
+
+// getter for ["m_ptr_to_taken", "m_ptr_to_not_taken", "m_predicted_taken", "m_actual_taken"]
+int Instruction::getBranchingInt(string branchVarName = "m_predicted_taken"){
+    if (branchVarName == "m_ptr_to_taken"){
+        return m_ptr_to_taken;
+    } else if (branchVarName == "m_ptr_to_not_taken"){
+        return m_ptr_to_not_taken;
+    } else if (branchVarName == "m_predicted_taken"){
+        return m_predicted_taken;
+    } else if (branchVarName == "m_actual_taken"){
+        return m_actual_taken;
+    } else {
+        // unexpected
+        return -1;
+    }
+}
+
+
+// setter for ["m_ptr_to_taken", "m_ptr_to_not_taken", "m_predicted_taken", "m_actual_taken"]
+// branchVarValue must be 1, 0, or -1
+// if anything unexpected is given --> do nothing
+void Instruction::setBranchingInt(string branchVarName = "m_predicted_taken", int branchVarValue){
+    if (branchVarValue != 1 and branchVarValue != 0 and branchVarValue != -1){
+        // unexpected
+        return;
+    } else if (branchVarName == "m_ptr_to_taken"){
+        m_ptr_to_taken = branchVarValue;
+    } else if (branchVarName == "m_ptr_to_not_taken"){
+        m_ptr_to_not_taken = branchVarValue;
+    } else if (branchVarName == "m_predicted_taken"){
+         m_predicted_taken = branchVarValue;
+    } else if (branchVarName == "m_actual_taken"){
+         m_actual_taken = branchVarValue;
+    } else {
+        // unexpected
+        return;
+    }
+}

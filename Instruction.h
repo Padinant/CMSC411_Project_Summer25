@@ -150,6 +150,15 @@ public:
   string getNextExpectedStageLog(string prevStage);
 
 
+  // Getters and Setters for attributes relating to Branch Prediction and CONTROL category instructions
+  // IMPORTANT NOTE: branchVarName has to be 1 of ["m_ptr_to_taken", "m_ptr_to_not_taken", "m_predicted_taken", "m_actual_taken"]
+  // 1=yes, 0=no, -1=unexpected
+
+  int getBranchingInt(string branchVarName = "m_predicted_taken");
+
+  void setBranchingInt(string branchVarName = "m_predicted_taken", int branchVarValue);
+
+
 private:
   string m_plaintext; // the instruction in plaintext
   

@@ -398,10 +398,10 @@ void Processor::startProcessor(){
                 // TODO check for inactivity (add logic for that and check it before the stall stage)
                 // for the actual branch selection prediction/determination, that would happen later on
                 // todo Section Description: add a section + boolean that if a previous branch selection had been wrong, deactivate everything until loop's end
-                if (deactivateRestOfBranch){
+                if (deactivateRestOfBranch and !currInst.getHasEnded()){
                     currInst.deActivate(m_clock);
                     
-                    // also update all the vectors so it doesn't cause issues
+                    // also update all the vectors so it doesn't cause issues (update based on the previous stage and prevRelevant stage)
                     // not sure if it would help with keeping the vectors straight, if we move this section to slightly later??? thought prob not
                     // vectors // TODO
                 }
@@ -558,7 +558,7 @@ void Processor::startProcessor(){
                             }
                         } else if (expectedStage == DEFAULT_PIPELINE_STAGES[2] or expectedStage == DOUBLE_ADD_EXECUTE_PREFIX 
                             or expectedStage == DOUBLE_MULT_EXECUTE_PREFIX or expectedStage == DOUBLE_DIV_EXECUTE_PREFIX){
-                            // It's the FIRST execute stage! A lot to break down
+                            // It's the FIRST execute stage! A lot to break down - come back here
 
                             // Things to deal with
                             // CONTROL EXECUTE - branch determination + ending the instruction + potentially deactivating a bunch more (by breaking the loop this round)
@@ -675,11 +675,29 @@ void Processor::startProcessor(){
 
             // add newInst to the end of the pipeline
             m_pipeline.push_back(newInst);
+
+
+
+
+            // NEW SECTION: BRACNH PREDICTION
+            if (newInst.getType() == "CONTROL"){
+                // make prediction using m_bp
+                int prediction = getBranchPrediction(newInst);
+
+
+
+                // update attributes accordingly
+
+
+                // update the pointer (based on prediction)
+            } else {
+                // update the pointer as normal
+                m_instruction_pointer += 1;
+            }
         }
 
         // update some pipeline-related variable to update the cycle
-        m_instruction_pointer += 1;
-        m_clock += 1;
+        m_clock += 1;   // clock cycle
 
         // EXIT CONDITIONS: check if we are done - 
         // ie: if every instruction in pipeline is dead, and there is no instructions left to fetch
@@ -709,6 +727,7 @@ void Processor::startProcessor(){
 
 // fetches the next instruction from m_instructions (corresponds to the IF stage)
 // creates and returns instruction object
+// new: also handles the branch prediction component of CONTROL instructions
 Instruction Processor::instructionFetch(){
     // Loads instruction plaintext (if any exist at address)
     // Creates instruction class and loads relevant attributes (ignore any labels at the beginning)
@@ -803,6 +822,12 @@ Instruction Processor::instructionFetch(){
 
     // // part 4
     // m_pipeline.push_back(myInst); // Note: this should now be done in startProcessor
+
+    // New Section: If it is a control instruction, also handle the branch prediction stage here
+
+
+
+
     return myInst;  
 }
 
@@ -988,12 +1013,17 @@ void Processor::getOperandVals(Instruction &x){
 }
 
 int Processor::getBranchPrediction(Instruction cInst) {
+    // New: don't call this for "J" instructions, because they are always taken
     // This returns 1 for taken, 0 for not taken, or -1 for something wrong
+    // New: Also, updates m_predicted_taken in cInst
     int prediction = m_bp.getPrediction();
+    cInst.setBranchingInt("m_predicted_taken", prediction);
     return prediction;
 }
 
-int Processor::getBranchActual(Instruction cInst) {
+int Processor::getBranchActual(Instruction cInst) { // todo: also potentially update the predictor
+    // New: Also, updates m_actual_taken in cInst (but only if we are successful)
+    // New: what to use: cInst.setBranchingInt("m_actual_taken", ...);
     string type = cInst.getType();
 
     // Something wrong
@@ -1003,6 +1033,7 @@ int Processor::getBranchActual(Instruction cInst) {
 
     // Jump is always taken
     if (type == "J") {
+        cInst.setBranchingInt("m_actual_taken", 1);
         return 1;
     }
 
@@ -1010,13 +1041,23 @@ int Processor::getBranchActual(Instruction cInst) {
     int s2 = cInst.getS2Val();
 
     if (type == "BEQ") {
-        if(s1 == s2) return 1;
-        else return 0;
+        if(s1 == s2) {
+            cInst.setBranchingInt("m_actual_taken", 1);
+            return 1;
+        } else {
+            cInst.setBranchingInt("m_actual_taken", 0);
+            return 0;
+        }
     }
 
     if (type == "BNE") {
-        if(s1 != s2) return 1;
-        else return 0;
+        if(s1 != s2) {
+            cInst.setBranchingInt("m_actual_taken", 1);
+            return 1;
+        } else {
+            cInst.setBranchingInt("m_actual_taken", 0);
+            return 0;
+        }
     }
 
     // Something went wrong if it makes it here
