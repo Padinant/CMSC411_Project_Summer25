@@ -128,7 +128,7 @@ void Processor::load(string reg_address, string mem_address){
     int mem_index = memoryAddressToIndex(mem_address);
 
     // Invalid mem index
-    if(mem_index < 0 || memAddress >=19){
+    if(mem_index < 0 || mem_index >= 19){
         return;
     }
 
@@ -248,11 +248,11 @@ int Processor::registerAddressToIndex(string register_address){
     char s1 = register_address[0]; // first character
     string s2 = register_address.substr(1); // everything else
 
-    if (s1 == "F" || s1 == "$"){
+    if (s1 == 'F' || s1 == '$'){
         // assuming that if there is an F, the rest is a valid number --> the register index
-        return atoi(s1.c_str());
+        return atoi(s2.c_str());
     }
-    
+
     return -1;
 }
 
@@ -455,7 +455,7 @@ void Processor::startProcessor(){
                         // progress instruction by 1 stage (if possible) - OR start to stall_all_the_way_down
                         // Figure out what the expected stage would be
                         // string expectedStage = currInst.getNextExpectedStageLog(getLatestStageLog());
-                        string prevStage = currInst.getLatestStageLog();
+                        //string prevStage = currInst.getLatestStageLog();
                         if (prevStage == DEFAULT_PIPELINE_STAGES[0]){
                             // IF stage - don't worry about dependencies being met at this stage
                             // instead call ID stage 
