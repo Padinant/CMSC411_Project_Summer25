@@ -10,7 +10,6 @@ class BranchPredictor{
 public:
     // // Constructor and Destructor
     BranchPredictor(){
-        m_prevWasTaken = true;
         m_prediction = true;
     }
     ~BranchPredictor(){}
@@ -35,16 +34,7 @@ public:
         m_prediction = !m_prediction;
     }
 
-    bool getPrevWasTaken(){
-        return m_prevWasTaken;
-    }
-
-    void updatePrevWasTaken(bool prevWasTaken){
-        m_prevWasTaken = prevWasTaken;
-    }
-
 private:
     bool m_prediction;
-    bool m_prevWasTaken = true;
 
 };

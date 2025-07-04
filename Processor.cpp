@@ -398,7 +398,7 @@ void Processor::startProcessor(){
                 // TODO check for inactivity (add logic for that and check it before the stall stage)
                 // for the actual branch selection prediction/determination, that would happen later on
                 // todo Section Description: add a section + boolean that if a previous branch selection had been wrong, deactivate everything until loop's end
-                if (deactivateRestOfBranch and !currInst.getHasEnded()){
+                if (deactivateRestOfBranch and currInst.getIsAlive()){
                     currInst.deActivate(m_clock);
                     
                     // also update all the vectors so it doesn't cause issues (update based on the previous stage and prevRelevant stage)
@@ -489,6 +489,7 @@ void Processor::startProcessor(){
                             
                             // call ID stage (load all operands)
                             instructionDecode(currInst);
+                            currInst.pushToStageLog("ID");
 
 
                             // IGNORE:
@@ -558,11 +559,81 @@ void Processor::startProcessor(){
                             }
                         } else if (expectedStage == DEFAULT_PIPELINE_STAGES[2] or expectedStage == DOUBLE_ADD_EXECUTE_PREFIX 
                             or expectedStage == DOUBLE_MULT_EXECUTE_PREFIX or expectedStage == DOUBLE_DIV_EXECUTE_PREFIX){
-                            // It's the FIRST execute stage! A lot to break down - come back here
+                            // It's the FIRST execute stage! A lot to break down
+                            string type = currInst.getType();
+                            string category = currInst.getCategory();
+                            string unit = currInst.getUnit();
+                            
+                            string dest = currInst.getDest();
+                            string s1 = currInst.getS1();
+                            string s2 = currInst.getS2();
 
-                            // Things to deal with
-                            // CONTROL EXECUTE - branch determination + ending the instruction + potentially deactivating a bunch more (by breaking the loop this round)
-                            // 
+
+                            // STOP: check if we have to end up stalling all the way down
+                            // if so, skip the rest of this section's code
+                            // note: todo use isExecuteAllowed function
+                            bool executeIsAllowed = isExecuteAllowed(currInst);
+
+
+
+                            // No: We are NOT completing the first EX stage on this cycle
+                            if (!executeIsAllowed){
+                                currInst.pushToStageLog(STALL_NAME);    // Push "STALL" to the instruction's stage log
+                                stall_all_the_way_down = true;          // stall ripples down
+                            } 
+                            // Yes: We are completing the first EX stage on this cycle
+                            else {
+                                // Push the correct EX stage name to the instruction's stage log
+                                currInst.pushToStageLogDefault();
+
+
+                                // Cases to deal with
+                                // CONTROL EXECUTE - branch determination + ending the instruction + potentially deactivating later remaining instructions in the loop this round
+                                // MEMORY EXECUTE - the only execute stage - mostly nothing, although there might be some forwarding?
+                                // ALU Integer EXECUTE - the only execute stage
+                                // ALU FP EXECUTE - the first execute stage
+
+                                // CONTROL EXECUTE
+                                if (category == "CONTROL"){
+                                    // todo: update forwarding 
+
+
+                                    // make branch determination
+                                    int determination = getBranchActual(currInst);
+                                    int prediction = currInst.getBranchingInt("m_predicted_taken");
+
+                                    // If prediction was wrong
+                                    if (determination != prediction){
+                                        m_bp.updatePrediction();    // let the predictor know that it was wrong
+
+                                        // update m_instruction_pointer to what it should have been
+                                        if (determination == 1){
+                                            // determination is taken
+                                            m_instruction_pointer = currInst.getBranchingInt("m_ptr_to_taken");
+                                        } else if (determination == 0) {
+                                            // determination is not taken
+                                            m_instruction_pointer = currInst.getBranchingInt("m_ptr_to_not_taken");
+                                        }
+                                    }
+
+                                    // end the instruction
+                                    currInst.endInstruction(m_clock);
+
+                                    // If prediction was wrong: deactivate any instruction in the pipeline right now after currInst
+                                    if (determination != prediction){
+                                        deactivateRestOfBranch = true;
+                                    }
+                                    
+
+                                } 
+                                // MEMORY EXECUTE
+                                else if (...){}
+                            }
+
+
+
+
+
                         }
 
 
@@ -607,7 +678,7 @@ void Processor::startProcessor(){
 
 
 
-                // old version
+                // old version // todo: DETELE
                 if (stall_all_the_way_down){
                     // set instruction to stall - note: we do not need to modify the forwarding queues in this version
                     currInst.pushToStageLog(STALL_NAME);
@@ -1020,6 +1091,15 @@ void Processor::getOperandVals(Instruction &x){
         }
     }
 }
+
+// return a boolean on whether we are allowed to move forward to the beginning of the execute stage, for the current instruction
+// this function also references the forwarding vectors and the instruction type and category
+bool Processor::isExecuteAllowed(Instruction &x){
+    // TODO
+}
+
+
+
 
 int Processor::getBranchPrediction(Instruction cInst) {
     // New: don't call this for "J" instructions, because they are always taken

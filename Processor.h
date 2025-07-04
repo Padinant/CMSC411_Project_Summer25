@@ -102,9 +102,6 @@ public:
   // Postcondition: when done, would also save the pipeline results into a new file
   void startProcessor();
 
-
-
-  // NEW (not yet in Processor.cpp)
   // fetches the next instruction from m_instructions (corresponds to the IF stage)
   // creates instruction object + update pointer (+ todo later: figure out branch prediction at this stage)
   Instruction instructionFetch();
@@ -118,6 +115,10 @@ public:
   // Precondition: IF stage has been called so we do know the names of the operands
   void getOperandVals(Instruction &x);
 
+  // return a boolean on whether we are allowed to move forward to the beginning of the execute stage, for the current instruction
+  // this function also references the forwarding vectors and the instruction type and category
+  bool isExecuteAllowed(Instruction &x);
+
 
   // BRANCH PREDICTION RELATED FUNCTIONS
   // Precondition: Instruction is a control instruction, and is at the IF stage
@@ -128,7 +129,7 @@ public:
   // What this function does: if predict taken: 1, if you predict not taken: 0, unexpected: -1
   int getBranchPrediction(Instruction cInst);
 
-  // Get the actual branch prediction result (1 for taken, 0 for not taken) based on m_s1, m_s2, m_dest, m_myType from the Instruction
+  // Get the actual branch determination result (1 for taken, 0 for not taken) based on m_s1, m_s2, m_dest, m_myType from the Instruction
   int getBranchActual(Instruction cInst);
 
   // given a labelName, return the index in which that label can be access on m_instructions

@@ -250,7 +250,7 @@ void Instruction::pushToStageLog(string stageName){
 
 // Pushes the default next stage into m_stageLog based on the function type and the previous stages
 // Precondition: IF stage has already been completed
-// Example: if we have a branch instruction using int unit, and latest stage was "ID", we would push "IF"
+// Example: if we have a branch instruction using int unit, and latest stage was "IF", we would push "ID"
 void Instruction::pushToStageLogDefault(){
     string prevStage = getLatestStageLog();
     string nextStage = getNextExpectedStageLog(prevStage);
