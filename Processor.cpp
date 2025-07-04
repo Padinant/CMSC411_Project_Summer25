@@ -50,20 +50,21 @@ int Processor::getMemoryValue(int index) {
     return -1;
 }
 
-void Processor::setRegisterValue(string reg, int value) {
-    int reg_index = atoi(reg.substr(1).c_str());
-    if (reg_index >= 0 && reg_index < 32) {
-        m_registers[reg_index] = value;
-    }
-}
+// note: commented these for now, as they are out of date and they cause errors (we are no longer using m_registers)
+// void Processor::setRegisterValue(string reg, int value) {
+//     int reg_index = atoi(reg.substr(1).c_str());
+//     if (reg_index >= 0 && reg_index < 32) {
+//         m_registers[reg_index] = value;
+//     }
+// }
 
-int Processor::getRegisterValue(string reg) {
-    int reg_index = atoi(reg.substr(1).c_str());
-    if (reg_index >= 0 && reg_index < 32) {
-        return m_registers[reg_index];
-    }
-    return -1;
-}
+// int Processor::getRegisterValue(string reg) {
+//     int reg_index = atoi(reg.substr(1).c_str());
+//     if (reg_index >= 0 && reg_index < 32) {
+//         return m_registers[reg_index];
+//     }
+//     return -1;
+// }
 
 
 // loads instructions from the given file name into m_instructions
@@ -121,42 +122,43 @@ void Processor::loadInstructions(string filename){
     }
 }
 
-void Processor::load(string reg_address, string mem_address){
-    // To convert mem_address to an actual index
-    int mem_index = memoryAddressToIndex(mem_address);
+// note: commented these for now, as they are out of date and they cause errors (we are no longer using m_registers)
+// void Processor::load(string reg_address, string mem_address){
+//     // To convert mem_address to an actual index
+//     int mem_index = memoryAddressToIndex(mem_address);
 
-    // Extracting the register index
-    int reg_index = atoi(reg_address.substr(1).c_str());
+//     // Extracting the register index
+//     int reg_index = atoi(reg_address.substr(1).c_str());
 
-    // Make sure the reg_index is valid between 0-32
-    if (reg_index < 0 || reg_index >= 32) {
-        cout << "Invalid register index: " << reg_index << endl;
-        return;
-    }
-    // Load value from memory into register
-    m_registers[reg_index] = m_memory[mem_index];
+//     // Make sure the reg_index is valid between 0-32
+//     if (reg_index < 0 || reg_index >= 32) {
+//         cout << "Invalid register index: " << reg_index << endl;
+//         return;
+//     }
+//     // Load value from memory into register
+//     m_registers[reg_index] = m_memory[mem_index];
 
-}
+// }
 
-void Processor::store(string reg_address, string mem_address){
-    // Extracting the register index
-    int reg_index = atoi(reg_address.substr(1).c_str());
+// void Processor::store(string reg_address, string mem_address){
+//     // Extracting the register index
+//     int reg_index = atoi(reg_address.substr(1).c_str());
 
-    // Getting the value stored in the the register
-    int value = m_registers[reg_index];
+//     // Getting the value stored in the the register
+//     int value = m_registers[reg_index];
 
-    // To convert it to an actual index
-    int mem_index = memoryAddressToIndex(mem_address);
+//     // To convert it to an actual index
+//     int mem_index = memoryAddressToIndex(mem_address);
 
-    // Make sure the index returned was valid and not -1 in case of an error
-    if (mem_index < 0 || mem_index >= 19) {
-        cout << "Invalid memory index returned by memoryAddressToIndex(): " << mem_index << endl;
-        return;
-    }
+//     // Make sure the index returned was valid and not -1 in case of an error
+//     if (mem_index < 0 || mem_index >= 19) {
+//         cout << "Invalid memory index returned by memoryAddressToIndex(): " << mem_index << endl;
+//         return;
+//     }
 
-    // To store the value into memory
-    m_memory[mem_index] = value;
-}
+//     // To store the value into memory
+//     m_memory[mem_index] = value;
+// }
 
 int Processor::memoryAddressToIndex(string memAddress){
     int openParen = -1;
@@ -300,7 +302,7 @@ void Processor::startProcessor(){
     - Precondition: load instructions (should be done before calling startProcessor)
     - start pipeline loop (main portion) - 1 iteration corresponds to 1 clock cycle:
         - update forwarding related vectors for the new cycle
-        - look at every instruction already in the pipeline and have them progress by 1 step
+        - look at every (alive) instruction already in the pipeline and have them progress by 1 step
             - if any is stalling, everything after would also stall, and we'd skip the IF part    
             - otherwise, instruction fetch from the next line (if not empty line), and increment the m_instruction_pointer
             - incremeny clock cycle by 1
@@ -323,6 +325,8 @@ void Processor::startProcessor(){
         // Clear m_availableNextCycle vectors (used to avoid RAW hazards) for the new cycle
         m_availableNextCycleRead.clear();
         m_availableNextCycleWrite.clear();
+        registerRAW_WriteTracker.clear();
+        registerRAW_ReadTracker.clear();
 
         // TODO: deal with instructions already in m_pipeline
         if (not m_pipeline.empty()){
@@ -342,11 +346,114 @@ void Processor::startProcessor(){
                 // TODO check for inactivity (add logic for that and check it before the stall stage)
                 // for the actual branch selection prediction/determination, that would happen later on
 
+                if (currInst.getIsAlive()){ // skip over anything that is inactive or dead
+                    // STALL - we are stalling
+                    if (stall_all_the_way_down){
+                        // set instruction to stall - note: we do not need to modify the forwarding queues in this version
+                        currInst.pushToStageLog(STALL_NAME);
+
+                        // SOME EXTRA STEPS DEPENDING ON THE PREVIOUS RELEVANT (non-stall) STAGE:
+                        string prevRelevantStage = currInst.getLatestNonStallStageLog();
+                        // IF - none
+                        if (prevRelevantStage == "IF"){
+                            // nothing here
+                        }
+                        // ID - update the operator values again
+                        else if (prevRelevantStage == "ID"){
+                            instructionDecode(currInst);
+
+                            // Actually, don't update any of the vectors during STALLs
+                            // // update forwarding vectors (note: since we are stalling, don't modify m_heldUpRead and m_heldUpWrite)
+                            // // just refill the forwarding vectors that get cleared at every cycle?
+                            // m_availableNextCycleRead
+
+                        } 
+                        // Other stages: EX, MEM, WB - also none
+                        else {
+                            // nothing here         // todo: potentially add more stuff to this if needed
+                        }
+                    } 
+                    
+                    // VALID STAGE - take a valid stage between ID-WB (if allowed through forwarding)
+                    else {
+                        string prevStage = currInst.getLatestStageLog();
+                        string expectedStage = currInst.getNextExpectedStageLog(prevStage);
+
+                        // ID - load operands, update forwarding(most cases), update mem-specific forwarding
+                        if (expectedStage == DEFAULT_PIPELINE_STAGES[1]){
+                            // check forwarding
+                            
+                            
+                            // call ID stage 
+                            instructionDecode(currInst);
+
+                            // update forwarding (heldUp R + W)
+                            // update forwarding (availableNextCycle R)
+                            // update forwarding (register mem-specific forwarding)
+                        }
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        // NOTE: these are old code remnants, I will get rid of them
+                        // progress instruction by 1 stage (if possible) - OR start to stall_all_the_way_down
+                        // Figure out what the expected stage would be
+                        // string expectedStage = currInst.getNextExpectedStageLog(getLatestStageLog());
+                        string prevStage = currInst.getLatestStageLog();
+                        if (prevStage == DEFAULT_PIPELINE_STAGES[0]){
+                            // IF stage - don't worry about dependencies being met at this stage
+                            // instead call ID stage 
+                            instructionDecode(currInst);
+                            // and update the forwarding vectors based on operators
+                            string type = currInst.getType();
+                            if (type == "J"){
+                                // skip for now - s1 is a label
+                            } 
+                            // else if (type == ...)
+                            
+                            // // destination
+                            // m_heldUpRead.push_back
+                            // m_heldUpWrite.push_back(currInst.getDestVal())
+                            
+                        } else if (prevStage == DEFAULT_PIPELINE_STAGES[4]){
+                            // WB stage - don't worry about dependencies being met at this stage
+                            // 
+                            // end the instruction
+
+                            // and update the forwarding vectors based on operators
+                        }
+                }
+
+
+
+
+
+
+
+
+
+
+                }
+
+
+
+
+
+                // old version
                 if (stall_all_the_way_down){
                     // set instruction to stall - note: we do not need to modify the forwarding queues in this version
                     currInst.pushToStageLog(STALL_NAME);
@@ -402,7 +509,7 @@ void Processor::startProcessor(){
         
         }
 
-        // fetch the next instruction if not stalling AND there are more instructions left to fetch
+        // fetch the next instruction if we are not stalling AND there are more instructions left to fetch
         if (!stall_all_the_way_down and (m_instruction_pointer >= m_instructions_len)){
             Instruction newInst = instructionFetch();
 
