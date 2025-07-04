@@ -20,10 +20,10 @@ int main(){
     myComputer.startProcessor();
 
 
-    // // optional: display memory and registers
-    // myComputer.displayMemory();
-    // myComputer.displayRegistersInt();
-    // myComputer.displayRegistersF();
+    // optional: display memory and registers
+    myComputer.displayMemory();
+    myComputer.displayRegistersInt();
+    myComputer.displayRegistersF();
 
     return 0;
 

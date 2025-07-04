@@ -11,7 +11,7 @@ testFile: Instruction.o Processor.o testFile.cpp
 	$(CXX) $(CXXFLAGS) Instruction.o Processor.o testFile.cpp -o testFile
 
 driver: Instruction.o Processor.o driver.cpp
-	$(CXX) $(CXXFLAGS) Instruction.o Processor.o driver.cpp -o driver
+	$(CXX) $(CXXFLAGS) Instruction.o Processor.o BranchPredictor.o driver.cpp -o driver
 
 Processor.o: Processor.h Processor.cpp Instruction.o BranchPredictor.o
 	$(CXX) $(CXXFLAGS) -c Processor.cpp
