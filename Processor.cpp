@@ -677,19 +677,18 @@ void Processor::startProcessor(){
             m_pipeline.push_back(newInst);
 
 
-
-
             // NEW SECTION: BRACNH PREDICTION
             if (newInst.getType() == "CONTROL"){
                 // make prediction using m_bp
                 int prediction = getBranchPrediction(newInst);
 
+                // set the instruction_pointer to the address we predicted it would take
+                if (prediction){
+                    m_instruction_pointer = newInst.getBranchingInt("m_ptr_to_taken");
+                } else {
+                    m_instruction_pointer += 1;
+                }
 
-
-                // update attributes accordingly
-
-
-                // update the pointer (based on prediction)
             } else {
                 // update the pointer as normal
                 m_instruction_pointer += 1;
