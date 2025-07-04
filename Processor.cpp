@@ -727,7 +727,7 @@ void Processor::startProcessor(){
 
 // fetches the next instruction from m_instructions (corresponds to the IF stage)
 // creates and returns instruction object
-// new: also handles the branch prediction component of CONTROL instructions
+// new: also sets m_ptr_to_taken and m_ptr_to_not_taken in "CONTROL" instructions
 Instruction Processor::instructionFetch(){
     // Loads instruction plaintext (if any exist at address)
     // Creates instruction class and loads relevant attributes (ignore any labels at the beginning)
@@ -823,10 +823,20 @@ Instruction Processor::instructionFetch(){
     // // part 4
     // m_pipeline.push_back(myInst); // Note: this should now be done in startProcessor
 
-    // New Section: If it is a control instruction, also handle the branch prediction stage here
+    // New Section: If it is a control instruction, also add m_ptr_to_taken and m_ptr_to_not_taken
+    if(myInst.getCategory() == "CONTROL"){
+        int posTaken;
+        int posNotTaken;
 
+        // posTaken is the position of the label at dest
+        posTaken = findLabelIndex(myInst.getDest());
 
+        // posNotTaken is the currentptr + 1 (ie: the next line as the branch instruction)
+        posNotTaken = m_instruction_pointer + 1;
 
+        myInst.setBranchingInt("m_ptr_to_taken", posTaken);
+        myInst.setBranchingInt("m_ptr_to_not_taken", posNotTaken);
+    }
 
     return myInst;  
 }
