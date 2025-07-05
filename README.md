@@ -40,16 +40,16 @@ This project was created as the final project for the UMBC CMSC 411(Computer Arc
 1. Clone the repository or download the files as a ZIP and open in an IDE
 2. Compile the program typing the ``make`` command in the terminal
 3. Run the program by either typing ``make run`` or ``./driver`` in the terminal after compiling
-    - To run the custom test file (testFile.cpp), please type ``./testFile`` to run the program
+    - To run the custom test file (``testFile.cpp``), please type ``./testFile`` to run the program
 4. After running, you may use the ``make clean`` command to remove any .o files created
 
-### What to Expect as Output
+#### What to Expect as Output
 
 - INSERT SCREEN SHOT OF SAMPLE OUTPUT AND VERY BRIEFLY EXPLAIN
 
 - A text file named ``spreadsheet1.txt`` will be created as an output file that contains the data from the 2D spreadsheet array
 
-### To Customize
+## To Customize
 - Either edit the given instruction file (``Instruction.txt``) or create new custom file
     - If using custom file, then please change the instructionFile variable in the ``driver.cpp`` file to the name of your custom file
     - This line is that you want to change: ``string instructionFile = "CUSTOM_FILE.txt";`` (Located on line 16)
