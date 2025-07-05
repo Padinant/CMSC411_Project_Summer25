@@ -119,6 +119,11 @@ public:
   // this function also references the forwarding vectors and the instruction type and category
   bool isExecuteAllowed(Instruction &x);
 
+  // this is a helper function for a bunch of stuff
+  // removes the FIRST INSTANCE of the string operandName, from the given vector
+  // if operandName not found in myVec, do nothing
+  void removeInstanceFromVector(vector<string> myVec, string operandName);
+
 
   // BRANCH PREDICTION RELATED FUNCTIONS
   // Precondition: Instruction is a control instruction, and is at the IF stage
@@ -141,7 +146,6 @@ public:
   int findLabelIndex(string labelName);
 
 
-  // NEW
   // Converts pipline into 2D array
   void convertPipline();
 

@@ -1096,6 +1096,13 @@ void Processor::getOperandVals(Instruction &x){
 // this function also references the forwarding vectors and the instruction type and category
 bool Processor::isExecuteAllowed(Instruction &x){
     // TODO
+    
+}
+
+
+
+void Processor::removeInstanceFromVector(vector<string> myVec, string operandName){
+    // TODO: implement this function
 }
 
 
