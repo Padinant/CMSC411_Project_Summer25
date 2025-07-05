@@ -19,6 +19,8 @@ This project was created as the final project for the UMBC CMSC 411(Computer Arc
 
 ## How it Works
 
+
+
 ## How to Run and Dependencies
 - Requires C++ compiler
 - An IDE or terminal
@@ -35,6 +37,14 @@ This project was created as the final project for the UMBC CMSC 411(Computer Arc
 - INSERT SCREEN SHOT OF SAMPLE OUTPUT AND VERY BRIEFLY EXPLAIN
 
 - A text file named "spreadsheet1.txt" will be created as an output file that contains the data from the 2d spreadsheet array
+
+### To Customize
+- Either edit the given instruction file (``Instruction.txt``) or create new custom file
+    - If using custom file, then please change the instructionFile variable in the ``driver.cpp`` file to the name of your custom file
+    - This line is what you want to change: ``string instructionFile = "CUSTOM_FILE.txt";`` (Located on line 16)
+- If you would like the output to be put in a file other than the given ``spreadsheet1.txt`` file,
+    - Please change the ``outputFile`` variable in the ``driver.cpp`` file to the name of your custom file
+    - This line is what you want to change: ``string outputFile = "CUSTOM_FILE.txt";`` (Located on line 17)
 
 ## Features and Notes
 
