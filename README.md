@@ -31,10 +31,12 @@ This project was created as the final project for the UMBC CMSC 411(Computer Arc
 6. Last is the ending exectuion step. When the pipeline is empty and there are no new instructions left, the processor will convert the pipline history into a 2D strimg array and export the data to a spreadsheet file (``spreadsheet1.txt``)
 
 ## How to Run and Dependencies
+#### Dependecies
 - Requires C++ compiler
 - An IDE or terminal
 - Optional: Git on local host if cloning repositry
 
+#### Steps to Run
 1. Clone the repository or download the files as a ZIP and open in an IDE
 2. Compile the program typing the ``make`` command in the terminal
 3. Run the program by either typing ``make run`` or ``./driver`` in the terminal after compiling
@@ -45,7 +47,7 @@ This project was created as the final project for the UMBC CMSC 411(Computer Arc
 
 - INSERT SCREEN SHOT OF SAMPLE OUTPUT AND VERY BRIEFLY EXPLAIN
 
-- A text file named "spreadsheet1.txt" will be created as an output file that contains the data from the 2d spreadsheet array
+- A text file named ``spreadsheet1.txt`` will be created as an output file that contains the data from the 2D spreadsheet array
 
 ### To Customize
 - Either edit the given instruction file (``Instruction.txt``) or create new custom file
@@ -57,6 +59,17 @@ This project was created as the final project for the UMBC CMSC 411(Computer Arc
 
 ## Features and Notes
 
+- Features:
+    - Full simulation of a pipelined processor
+    - Instruction parsign and decoding
+    - Memory, register, load, and store logic
+    - Full forwarding and hazad detection
+    - Branch prediction
+    - Pipline is exported to ``.txt`` for easy visualization
+
+- Notes:
+    - The program supports 32 integer and 32 floating point registers
+    - The memory size is limited to 19 entries (0-18)
 
 
 
