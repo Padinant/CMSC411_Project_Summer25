@@ -685,8 +685,7 @@ void Processor::startProcessor(){
 
                             currInst.setResult(result);
 
-                        } else if (expectedStage[0] == DOUBLE_ADD_EXECUTE_PREFIX[0] or expectedStage[0] == NUM_DOUBLE_MULT_EXECUTES[0] 
-                        or expectedStage[0] == NUM_DOUBLE_DIV_EXECUTES[0]){
+                        } else if (expectedStage[0] == DOUBLE_ADD_EXECUTE_PREFIX[0] or expectedStage[0] == DOUBLE_MULT_EXECUTE_PREFIX[0] or expectedStage[0] == DOUBLE_DIV_EXECUTE_PREFIX[0]){
                             // DO NOTHING IN A MIDWAY EXECUTE STAGE FOR FP ALU
 
                             // only add the stage to stage log
@@ -695,108 +694,78 @@ void Processor::startProcessor(){
                             // The memory ("MEM") stage!
                             // we are guaranteed to have either a MEMORY or a ALU instruction
                             string category = currInst.getCategory();
+                            string type = currInst.getType();
 
+                            // note: isMemAllowed() is basically checking there isn't any forwarding conflicts or hazards for load/store operations
                             if (category == "ALU" or isMemAllowed(currInst)){
                                 // we can go ahead with the MEM stage
                                 
+                                // log the stage
+                                currInst.pushToStageLogDefault();
+
+                                if (category == "MEMORY"){
+                                    // if it's a memory instruction, perform load or store
+                                    string dest = currInst.getDest();   // register
+                                    string s1 = currInst.getS1();       // memory address or immediate
+                                    int destVal = currInst.getDestVal();
+                                    int s1Val = currInst.getS1Val();
+
+                                    if (type == "L.D" or type == "LW" or type == "LI"){
+                                        // load
+                                        load(dest, s1);
+                                    } else {
+                                        // store
+                                        store(dest, s1);
+                                    }
+
+                                    // then, update the forwarding checks
+                                    updateForwardingForMEM(currInst);
+                                }
+
+                            } else {
+                                // STALL
+                                currInst.pushToStageLog(STALL_NAME);
+                                stall_all_the_way_down = true;          // stall ripples down
                             }
+                        } else if (expectedStage == DEFAULT_PIPELINE_STAGES[4]){
+                            // Finally, the Writeback Stage
+                            // check if it is possible, if not stall
+                            if (not isWBAllowed()){
+                                // STALL
+                                currInst.pushToStageLog(STALL_NAME);
+                                stall_all_the_way_down = true;          // stall ripples down
+                            } else {
+                                // log
+                                currInst.pushToStageLogDefault();
+
+                                // update forwarding if needed
+                                updateForwardingForWB(currInst);
+
+                                // save results for ALU instructions (into dest register)
+                                string type = currInst.getType();
+                                string category = currInst.getCategory();
+                                string unit = currInst.getUnit();
+                                string addr = currInst.getDest();
+                                int result = currInst.getResult();
+                                if (category == "ALU" and unit == "INT"){
+                                    // Int register
+                                    m_registersInt[(registerAddressToIndex(addr)] = result;
+                                } else if (category == "ALU"){
+                                    // FP register
+                                    m_registersF[(registerAddressToIndex(addr)] = result;
+                                }
+
+                                // end the instruction
+                                currInst.endInstruction(m_clock);
+                            }
+
                         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        // NOTE: these are old code remnants, I will get rid of them                            
-                        // } else if (prevStage == DEFAULT_PIPELINE_STAGES[4]){
-                        //     // WB stage - don't worry about dependencies being met at this stage
-                        //     // 
-                        //     // end the instruction
-
-                        //     // and update the forwarding vectors based on operators
-                        // }
                 }
 
-
-
-
-
-
-
-
-
-
-                }
-
-
-
-
-
-                // old version // todo: DETELE
-                if (stall_all_the_way_down){
-                    // set instruction to stall - note: we do not need to modify the forwarding queues in this version
-                    currInst.pushToStageLog(STALL_NAME);
-                    // if previous (non-stall) stage was ID, update the operator values again
-                    string prevRelevantStage = currInst.getLatestNonStallStageLog();
-                    if (prevRelevantStage == "ID"){
-                        instructionDecode(currInst);
-                    }
-
-                    // todo: potentially add more stuff to this if needed
-
-                } else {
-                    // progress instruction by 1 stage (if possible) - OR start to stall_all_the_way_down
-                    // Figure out what the expected stage would be
-                    // string expectedStage = currInst.getNextExpectedStageLog(getLatestStageLog());
-                    string prevStage = currInst.getLatestStageLog();
-                    if (prevStage == DEFAULT_PIPELINE_STAGES[0]){
-                        // IF stage - don't worry about dependencies being met at this stage
-                        // instead call ID stage 
-                        instructionDecode(currInst);
-                        // and update the forwarding vectors based on operators
-                        string type = currInst.getType();
-                        if (type == "J"){
-                            // skip for now - s1 is a label
-                        } 
-                        // else if (type == ...)
-                        
-                        // // destination
-                        // m_heldUpRead.push_back
-                        // m_heldUpWrite.push_back(currInst.getDestVal())
-                        
-                    } else if (prevStage == DEFAULT_PIPELINE_STAGES[4]){
-                        // WB stage - don't worry about dependencies being met at this stage
-                        // 
-                        // end the instruction
-
-                        // and update the forwarding vectors based on operators
-                    }
                 }
             }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+       
         
         }
 
@@ -1308,7 +1277,19 @@ void Processor::updateForwardingForMEM(Instruction &x){
     return;
 }
 
+// similar concept as isMemAllowed()- but mainly expected to be used for ALU instructions
+// should by default be true for MEMORY instructions
+// this function also references the forwarding vectors and the instruction type and category
+bool Processor::isWBAllowed(Instruction &x){
+    return true;
+}
 
+// This would be called when we are doing the WB stage of any ALU or MEMORY instruction
+// not implemented, but assume that it updates forwarding correctly
+// note that after this stage in ALU instructions, you can start forwarding the dest operand (after the current cycle is over)
+void Processor::updateForwardingForWB(Instruction &x){
+    return;
+}
 
 
 // BRANCHING FUNCTIONS

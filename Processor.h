@@ -150,6 +150,17 @@ public:
   // note that after this stage in MEMORY instructions, you can start forwarding the dest operand
   void updateForwardingForMEM(Instruction &x);
 
+  // similar concept as isMemAllowed()- but mainly expected to be used for ALU instructions
+  // should by default be true for MEMORY instructions
+  // this function also references the forwarding vectors and the instruction type and category
+  bool isWBAllowed(Instruction &x);
+
+  // This would be called when we are doing the WB stage of any ALU or MEMORY instruction
+  // not implemented, but assume that it updates forwarding correctly
+  // note that after this stage in ALU instructions, you can start forwarding the dest operand (after the current cycle is over)
+  void updateForwardingForWB(Instruction &x);
+
+
 
   // BRANCH PREDICTION RELATED FUNCTIONS
   // Precondition: Instruction is a control instruction, and is at the IF stage
