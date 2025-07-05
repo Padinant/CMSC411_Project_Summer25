@@ -1095,14 +1095,33 @@ void Processor::getOperandVals(Instruction &x){
 // return a boolean on whether we are allowed to move forward to the beginning of the execute stage, for the current instruction
 // this function also references the forwarding vectors and the instruction type and category
 bool Processor::isExecuteAllowed(Instruction &x){
-    // TODO
+    // We need to check the heldUp stuff for everything other than J and Loads
+        // L.D Fa, Offset(addr)
+        // S.D Fa, Offset(addr)
+        // LI $d, IMM64 -Integer Immediate Load
+        // LW $d, Offset(addr)
+        // SW $s, Offset(addr)
+
+    string type = x.getType();
+    if (type == "J" or type == "L.D" or type == "LI" or type == "LW"){
+        return true;
+    } else {
+        if 
+    }
     
 }
 
 
 
 void Processor::removeInstanceFromVector(vector<string> myVec, string operandName){
-    // TODO: implement this function
+    // part 1: find the first occurrence – using iterator type
+    vector<string>::iterator it = find(myVec.begin(), myVec.end(), operandName);
+
+    // part 2: if found, erase it
+    if (it != myVec.end()) {
+        myVec.erase(it);
+    }
+
 }
 
 
