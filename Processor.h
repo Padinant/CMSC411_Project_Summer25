@@ -127,6 +127,10 @@ public:
   // helper
   bool moreThanOneInstanceInVector(vector<string> myVec, string operandName);
 
+  // helper
+  // This would be called when we are doing the first Execute stage of any category
+  void updateForwardingForEX1(Instruction &x);
+
 
   // BRANCH PREDICTION RELATED FUNCTIONS
   // Precondition: Instruction is a control instruction, and is at the IF stage

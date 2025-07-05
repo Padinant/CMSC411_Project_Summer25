@@ -574,8 +574,6 @@ void Processor::startProcessor(){
                             // note: todo use isExecuteAllowed function
                             bool executeIsAllowed = isExecuteAllowed(currInst);
 
-
-
                             // No: We are NOT completing the first EX stage on this cycle
                             if (!executeIsAllowed){
                                 currInst.pushToStageLog(STALL_NAME);    // Push "STALL" to the instruction's stage log
@@ -595,8 +593,8 @@ void Processor::startProcessor(){
 
                                 // CONTROL EXECUTE
                                 if (category == "CONTROL"){
-                                    // todo: update forwarding 
-
+                                    // First: update forwarding (for the registers we will read from) - they may now be accessed after this cycle
+                                    updateForwardingForEX1(currInst);
 
                                     // make branch determination
                                     int determination = getBranchActual(currInst);
@@ -1116,11 +1114,11 @@ bool Processor::isExecuteAllowed(Instruction &x){
     string category = x.getCategory();
 
     if (category == "CONTROL"){
-        return (!moreThanOneInstanceInVector(myV, dest));
+        return (!(moreThanOneInstanceInVector(myV, dest) or moreThanOneInstanceInVector(myV, s1)));
     }
     if (category == "MEMORY"){
         // stores
-        return (!moreThanOneInstanceInVector(myV, s1));
+        return (!moreThanOneInstanceInVector(myV, dest));
     }
     // category == "ALU"
     if (type == "ADDI"){
@@ -1165,6 +1163,52 @@ bool Processor::moreThanOneInstanceInVector(vector<string> myVec, string operand
     }
 }
 
+// This would be called when we are doing the first Execute stage of any category
+void Processor::updateForwardingForEX1(Instruction &x){
+    // update the forwarding vectors  - move from heldUpRead --> availablenextcycleRead
+    string type = x.getType();
+    string dest = x.getDest();
+    string s1 = x.getS1();
+    string s2 = x.getS2();
+    string category = x.getCategory();
+    vector<string> v1 = m_heldUpRead;
+    vector<string> v2 = m_availableNextCycleRead;
+
+    if (category=="CONTROL"){
+        // remove s1 and dest from read
+        if (type != "J"){
+            // remove from v1
+            removeInstanceFromVector(v1, s1);
+            removeInstanceFromVector(v1, dest);
+            // transfer to v2
+            v2.push_back(s1);
+            v2.push_back(dest);
+        }
+    }
+    if (category == "MEMORY"){
+        // for store, remove dest
+        if (!(type == "L.D" or type == "LI" or type == "LW")){
+            removeInstanceFromVector(v1, dest);
+            v2.push_back(dest);
+        }
+
+    }
+    if (category == "ALU"){
+        // s1 + for everything except "ADDI", s2
+        removeInstanceFromVector(v1, s1);
+        v2.push_back(s1);
+        if (type != "ADDI"){
+            removeInstanceFromVector(v1, s2);
+            v2.push_back(s2);
+        }
+    }
+}
+
+
+
+
+
+// BRANCHING FUNCTIONS
 
 int Processor::getBranchPrediction(Instruction cInst) {
     // New: don't call this for "J" instructions, because they are always taken
