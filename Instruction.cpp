@@ -419,7 +419,7 @@ int Instruction::getBranchingInt(string branchVarName = "m_predicted_taken"){
 // setter for ["m_ptr_to_taken", "m_ptr_to_not_taken", "m_predicted_taken", "m_actual_taken"]
 // branchVarValue must be 1, 0, or -1
 // if anything unexpected is given --> do nothing
-void Instruction::setBranchingInt(string branchVarName = "m_predicted_taken", int branchVarValue){
+void Instruction::setBranchingInt(string branchVarName = "m_predicted_taken", int branchVarValue = 0){
     if (branchVarValue != 1 and branchVarValue != 0 and branchVarValue != -1){
         // unexpected
         return;
