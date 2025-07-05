@@ -157,9 +157,9 @@ public:
   // IMPORTANT NOTE: branchVarName has to be 1 of ["m_ptr_to_taken", "m_ptr_to_not_taken", "m_predicted_taken", "m_actual_taken"]
   // 1=yes, 0=no, -1=unexpected
 
-  int getBranchingInt(string branchVarName = "m_predicted_taken");
+  int getBranchingInt(string branchVarName);
 
-  void setBranchingInt(string branchVarName = "m_predicted_taken", int branchVarValue = 0);
+  void setBranchingInt(string branchVarName, int branchVarValue);
 
 
 private:

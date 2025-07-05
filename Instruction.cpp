@@ -400,7 +400,7 @@ string Instruction::getNextExpectedStageLog(string prevStage){
 // 1=yes, 0=no, -1=unexpected
 
 // getter for ["m_ptr_to_taken", "m_ptr_to_not_taken", "m_predicted_taken", "m_actual_taken"]
-int Instruction::getBranchingInt(string branchVarName = "m_predicted_taken"){
+int Instruction::getBranchingInt(string branchVarName){
     if (branchVarName == "m_ptr_to_taken"){
         return m_ptr_to_taken;
     } else if (branchVarName == "m_ptr_to_not_taken"){
@@ -419,7 +419,7 @@ int Instruction::getBranchingInt(string branchVarName = "m_predicted_taken"){
 // setter for ["m_ptr_to_taken", "m_ptr_to_not_taken", "m_predicted_taken", "m_actual_taken"]
 // branchVarValue must be 1, 0, or -1
 // if anything unexpected is given --> do nothing
-void Instruction::setBranchingInt(string branchVarName = "m_predicted_taken", int branchVarValue = 0){
+void Instruction::setBranchingInt(string branchVarName, int branchVarValue){
     if (branchVarValue != 1 and branchVarValue != 0 and branchVarValue != -1){
         // unexpected
         return;
