@@ -730,7 +730,7 @@ void Processor::startProcessor(){
                         } else if (expectedStage == DEFAULT_PIPELINE_STAGES[4]){
                             // Finally, the Writeback Stage
                             // check if it is possible, if not stall
-                            if (not isWBAllowed()){
+                            if (not isWBAllowed(currInst)){
                                 // STALL
                                 currInst.pushToStageLog(STALL_NAME);
                                 stall_all_the_way_down = true;          // stall ripples down
@@ -749,10 +749,10 @@ void Processor::startProcessor(){
                                 int result = currInst.getResult();
                                 if (category == "ALU" and unit == "INT"){
                                     // Int register
-                                    m_registersInt[(registerAddressToIndex(addr)] = result;
+                                    m_registersInt[registerAddressToIndex(addr)] = result;
                                 } else if (category == "ALU"){
                                     // FP register
-                                    m_registersF[(registerAddressToIndex(addr)] = result;
+                                    m_registersF[registerAddressToIndex(addr)] = result;
                                 }
 
                                 // end the instruction
