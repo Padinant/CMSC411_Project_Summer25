@@ -378,6 +378,11 @@ void Processor::startProcessor(){
         registerRAW_WriteTracker.clear();
         registerRAW_ReadTracker.clear();
 
+        // NOTE: due to forwarding potentially not being fully implemented, I'm adding these so there is a chance the processor can run
+        // in reality, the 2 lines below shouldn't be here
+        m_heldUpRead.clear();
+        m_heldUpWrite.clear();
+
         // TODO: deal with instructions already in m_pipeline
         if (not m_pipeline.empty()){
             // ADD CODE HERE LATER
@@ -557,8 +562,8 @@ void Processor::startProcessor(){
                                     m_heldUpWrite.push_back(dest);
                                 }
                             }
-                        } else if (expectedStage == DEFAULT_PIPELINE_STAGES[2] or expectedStage == DOUBLE_ADD_EXECUTE_PREFIX 
-                            or expectedStage == DOUBLE_MULT_EXECUTE_PREFIX or expectedStage == DOUBLE_DIV_EXECUTE_PREFIX){
+                        } else if (expectedStage == DEFAULT_PIPELINE_STAGES[2] or (expectedStage[0]+"1") == DOUBLE_ADD_EXECUTE_PREFIX 
+                            or (expectedStage[0]+"1") == DOUBLE_MULT_EXECUTE_PREFIX or (expectedStage[0]+"1") == DOUBLE_DIV_EXECUTE_PREFIX){
                             // It's the FIRST execute stage! A lot to break down
                             string type = currInst.getType();
                             string category = currInst.getCategory();
@@ -624,14 +629,77 @@ void Processor::startProcessor(){
                                     
 
                                 } 
-                                // MEMORY EXECUTE
-                                else if (...){}
+                                // MEMORY EXECUTE - single stage
+                                else if (category == "MEMORY"){
+                                    updateForwardingForEX1(currInst);
+                                    
+                                    // NOTE: MEMORY SPECIFIC (register to register) FORWARDING WOULD GO HERE (todo) 
+                                    // if it is a load instruction:
+                                    //  //if dest not in registerRAW_WriteTracker or registerRAW_ReadTracker: add it to registerRAW_WriteTracker
+                                    
+                                }
+                                // ALU FP EXECUTE
+                                else if (expectedStage == DOUBLE_MULT_EXECUTE_PREFIX){
+                                    updateForwardingForEX1(currInst);
+
+                                } 
+                                // ALU INT EXECUTE
+                                else {
+                                    // This is the first and final EX stage
+                                    // calculate result
+                                    int result = 0;
+                                    if (type == "ADD" or type == "ADDI"){
+                                        // add or add immediate
+                                        result = currInst.getS1Val() + currInst.getS2Val();
+                                    } else if (type == "SUB"){
+                                        result = currInst.getS1Val() - currInst.getS2Val();
+                                    }
+                                    // enable forwarding next cycle
+                                    updateForwardingForEX1(currInst);
+                                }
                             }
 
+                        } else if ((expectedStage[0]+"2") == DOUBLE_ADD_EXECUTE_PREFIX or (expectedStage[0]+"10") == DOUBLE_MULT_EXECUTE_PREFIX 
+                        or (expectedStage[0]+"40") == DOUBLE_DIV_EXECUTE_PREFIX) {
+                            // THE FINAL EX STAGE STAGE FOR FP ALU INSTRUCTIONS
 
+                            // add to stage log
+                            // Push the correct EX stage name to the instruction's stage log
+                            currInst.pushToStageLogDefault();
 
+                            // update forwarding
+                            updateForwardingForEXf(currInst);
 
+                            // save the result 
+                            int result = 0;
+                            string type = currInst.getType();
+                            if (type == "ADD.D"){
+                                result = currInst.getS1Val() + currInst.getS2Val();
+                            } else if (type == "SUB.D"){
+                                result = currInst.getS1Val() - currInst.getS2Val();
+                            } else if (type == "MUL.D"){
+                                result = currInst.getS1Val() * currInst.getS2Val();
+                            } else if (type == "DIV.D"){
+                                result = currInst.getS1Val() / currInst.getS2Val();
+                            }
 
+                            currInst.setResult(result);
+
+                        } else if (expectedStage[0] == DOUBLE_ADD_EXECUTE_PREFIX[0] or expectedStage[0] == NUM_DOUBLE_MULT_EXECUTES[0] 
+                        or expectedStage[0] == NUM_DOUBLE_DIV_EXECUTES[0]){
+                            // DO NOTHING IN A MIDWAY EXECUTE STAGE FOR FP ALU
+
+                            // only add the stage to stage log
+                            currInst.pushToStageLogDefault();
+                        } else if (expectedStage == DEFAULT_PIPELINE_STAGES[3]){
+                            // The memory ("MEM") stage!
+                            // we are guaranteed to have either a MEMORY or a ALU instruction
+                            string category = currInst.getCategory();
+
+                            if (category == "ALU" or isMemAllowed(currInst)){
+                                // we can go ahead with the MEM stage
+                                
+                            }
                         }
 
 
@@ -1093,6 +1161,7 @@ void Processor::getOperandVals(Instruction &x){
 // return a boolean on whether we are allowed to move forward to the beginning of the execute stage, for the current instruction
 // this function also references the forwarding vectors and the instruction type and category
 bool Processor::isExecuteAllowed(Instruction &x){
+    // NOTE: this function might unfortunately be incomplete
     // NEW??: also check there isn't an instance of what we are reading from in heldUpWrite (it would be a RAW hazard)
     // We need to check the heldUp stuff for everything other than J and Loads
         // L.D Fa, Offset(addr)
@@ -1215,6 +1284,29 @@ void Processor::updateForwardingForEX1(Instruction &x){
     }
 }
 
+
+// STOCK PIPELINE RELATED FUNCTIONS
+// NOTE: these functions MIGHT unfortunately be incomplete or unimplemented, due to us potentially not having enough time to finish them
+// This would be called when we are doing the last Execute stage of any FP ALU instruction
+// not implemented, but assume updates forwarding, similarly to how updateForwardingForEX1, might update forwarding for an INT ALU instruction
+void Processor::updateForwardingForEXf(Instruction &x){
+    return;
+}
+
+// similar concept as isExecuteAllowed() but for the MEM stage
+// return a boolean on whether we are allowed to move forward to the beginning of the MEM stage, for the current instructiona
+// should by default be true for ALU instructions, slightly more nuance for Memory instructions
+// this function also references the forwarding vectors and the instruction type and category
+bool Processor::isMemAllowed(Instruction &x){
+    return true;
+}
+
+// This would be called when we are doing the MEM stage of any ALU or MEMORY instruction
+// not implemented, but assume that it updates forwarding correctly
+// note that after this stage in MEMORY instructions, you can start forwarding the dest operand
+void Processor::updateForwardingForMEM(Instruction &x){
+    return;
+}
 
 
 
