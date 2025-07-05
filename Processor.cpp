@@ -1093,6 +1093,7 @@ void Processor::getOperandVals(Instruction &x){
 // return a boolean on whether we are allowed to move forward to the beginning of the execute stage, for the current instruction
 // this function also references the forwarding vectors and the instruction type and category
 bool Processor::isExecuteAllowed(Instruction &x){
+    // NEW??: also check there isn't an instance of what we are reading from in heldUpWrite (it would be a RAW hazard)
     // We need to check the heldUp stuff for everything other than J and Loads
         // L.D Fa, Offset(addr)
         // S.D Fa, Offset(addr)
@@ -1101,17 +1102,27 @@ bool Processor::isExecuteAllowed(Instruction &x){
         // SW $s, Offset(addr)
 
     vector<string> myV = m_heldUpRead;
+    vector<string> myV2 = m_heldUpWrite;
+    vector<string> myV3 = m_availableNextCycleRead;
+    vector<string> myV4 = m_availableNextCycleWrite;
+
     string type = x.getType();
+
+    string dest = x.getDest();
+    string s1 = x.getS1();
+    string s2 = x.getS2();
+    string category = x.getCategory();
+
+
+
+
+
+    // Read 
 
     if (type == "J" or type == "L.D" or type == "LI" or type == "LW"){
         return true;
     }
     // find out if there is more than 1 instances of any of the (READ) operators within the vector --> if there are: return false
-    
-    string dest = x.getDest();
-    string s1 = x.getS1();
-    string s2 = x.getS2();
-    string category = x.getCategory();
 
     if (category == "CONTROL"){
         return (!(moreThanOneInstanceInVector(myV, dest) or moreThanOneInstanceInVector(myV, s1)));
