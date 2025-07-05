@@ -159,7 +159,7 @@ public:
 
   int getBranchingInt(string branchVarName = "m_predicted_taken");
 
-  void setBranchingInt(string branchVarName = "m_predicted_taken", int branchVarValue);
+  void setBranchingInt(string branchVarName = "m_predicted_taken", int branchVarValue = 0);
 
 
 private:
