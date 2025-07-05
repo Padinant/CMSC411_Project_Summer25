@@ -99,6 +99,9 @@ public:
   string getS2();
   void setS2(string s2);
 
+  int getResult();
+  void setResult(int result);
+
   // more getters and setters (int instead of string)
   int getDestVal();
   void setDestVal(int destVal);

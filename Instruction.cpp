@@ -179,6 +179,13 @@ void Instruction::setS2(string s2){
     m_s2 = s2;
 }
 
+int Instruction::getResult(){
+    return m_result;
+}
+void Instruction::setResult(int result){
+    m_result = result;
+}
+
 // more getters and setters (int instead of string)
 int Instruction::getDestVal(){
     return m_destVal;

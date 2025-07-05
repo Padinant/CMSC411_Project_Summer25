@@ -132,6 +132,25 @@ public:
   void updateForwardingForEX1(Instruction &x);
 
 
+  // STOCK PIPELINE RELATED FUNCTIONS
+  // NOTE: these functions MIGHT unfortunately be incomplete or unimplemented, due to us potentcially not having enough time to finish them
+  // This would be called when we are doing the last Execute stage of any FP ALU instruction
+  // not implemented, but assume updates forwarding, similarly to how updateForwardingForEX1, might update forwarding for an INT ALU instruction
+  void updateForwardingForEXf(Instruction &x);
+
+  // similar concept as isExecuteAllowed() but for the MEM stage
+  // return a boolean on whether we are allowed to move forward to the beginning of the MEM stage, for the current instructiona
+  // should by default be true for ALU instructions
+  // slightly more nuance for Memory instructions
+  // this function also references the forwarding vectors and the instruction type and category
+  bool isMemAllowed(Instruction &x);
+
+  // This would be called when we are doing the MEM stage of any ALU or MEMORY instruction
+  // not implemented, but assume that it updates forwarding correctly
+  // note that after this stage in MEMORY instructions, you can start forwarding the dest operand
+  void updateForwardingForMEM(Instruction &x);
+
+
   // BRANCH PREDICTION RELATED FUNCTIONS
   // Precondition: Instruction is a control instruction, and is at the IF stage
   // For reference (don't modify these values)
