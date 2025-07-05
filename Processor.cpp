@@ -1102,15 +1102,44 @@ bool Processor::isExecuteAllowed(Instruction &x){
         // LW $d, Offset(addr)
         // SW $s, Offset(addr)
 
+    vector<string> myV = m_heldUpRead;
     string type = x.getType();
+
     if (type == "J" or type == "L.D" or type == "LI" or type == "LW"){
         return true;
-    } else {
-        if 
     }
+    // find out if there is more than 1 instances of any of the (READ) operators within the vector --> if there are: return false
     
-}
+    string dest = x.getDest();
+    string s1 = x.getS1();
+    string s2 = x.getS2();
+    string category = x.getCategory();
 
+    if (category == "CONTROL"){
+        return (!moreThanOneInstanceInVector(myV, dest));
+    }
+    if (category == "MEMORY"){
+        // stores
+        return (!moreThanOneInstanceInVector(myV, s1));
+    }
+    // category == "ALU"
+    if (type == "ADDI"){
+        // add immediate
+        return !moreThanOneInstanceInVector(myV, s1); 
+    }
+
+    // account for s1 and s2 being same register
+
+    int cnt1 = count(myV.begin(), myV.end(), s1);
+    int cnt2 = count(myV.begin(), myV.end(), s2);
+
+    if (s1!=s2) {
+        return (cnt1<2 and cnt2<2);
+    } else {
+        return (cnt1<3);
+    }
+
+}
 
 
 void Processor::removeInstanceFromVector(vector<string> myVec, string operandName){
@@ -1124,7 +1153,17 @@ void Processor::removeInstanceFromVector(vector<string> myVec, string operandNam
 
 }
 
+bool Processor::moreThanOneInstanceInVector(vector<string> myVec, string operandName){
+    // Find if operandName appears in vector more than once
+    // count how many times operandName appears
+    int cnt = count(myVec.begin(), myVec.end(), operandName);
 
+    if (cnt >= 2) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 int Processor::getBranchPrediction(Instruction cInst) {

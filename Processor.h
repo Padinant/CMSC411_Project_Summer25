@@ -124,6 +124,9 @@ public:
   // if operandName not found in myVec, do nothing
   void removeInstanceFromVector(vector<string> myVec, string operandName);
 
+  // helper
+  bool moreThanOneInstanceInVector(vector<string> myVec, string operandName);
+
 
   // BRANCH PREDICTION RELATED FUNCTIONS
   // Precondition: Instruction is a control instruction, and is at the IF stage
